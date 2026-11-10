@@ -1,6 +1,6 @@
-# 08. 필수 관측 계층 설계
+# 08. 관측 계층 — 후반 구축을 위한 요구사항
 
-> **상태: 설계 단계.** 아직 설치, 데이터 수집, 대시보드, 알림을 검증하지 않았습니다.
+> **상태: 요구사항 정의 / 도구 미확정.** 관측 도구 선택 및 본격 구축은 [06. 로드맵](06-roadmap.md)의 **6단계(브랜드 A Cutover 이후)**에 수행합니다. 초기에는 JSON 로그, k6, 기본 CloudWatch 지표만 수집합니다. 아래 구조는 검토 후보이며 배포 확정안이 아닙니다.
 
 ## 목적
 
@@ -12,7 +12,7 @@
 - 브랜드 A의 Cutover 전후에 오류, 주문 누락, 지연이 발생했는가?
 - 서비스 장애 발생 시 알림 → 로그 → Trace → 인프라 메트릭 순서로 원인을 확인할 수 있는가?
 
-## 최소 관측 아키텍처
+## 관측 아키텍처 후보 (확정 아님)
 
 ```mermaid
 flowchart LR
@@ -30,9 +30,16 @@ flowchart LR
   CW --> ALARM[CloudWatch Alarm]
 ```
 
-**실행 결정:** API/Worker는 OpenTelemetry SDK로 계측하고 Collector를 통해 Trace를 수집합니다. 조회·저장 백엔드는 구현 시 AWS X-Ray 또는 OTel 호환 도구 중 비용·운영 부담을 기준으로 선택해 ADR로 기록합니다. 구조화 로그와 AWS 인프라 메트릭의 기본 수집은 CloudWatch를 사용합니다. 전체를 처음부터 별도 Prometheus/Grafana/Tempo 스택으로 운영할 필요는 없습니다.
+**도구 선정 보류:** CloudWatch 단독, CloudWatch + OpenTelemetry/X-Ray, Prometheus/Grafana를 포함한 하이브리드 구성 중 실제 실험 요구와 운영 비용을 비교한 뒤 선택합니다. 현재의 Collector/Trace 도식은 가능한 옵션 중 하나일 뿐입니다. 초기에 별도 Collector, Prometheus, Grafana, Trace 백엔드를 배포하지 않습니다.
 
-## 계측 경계
+## 지금 유지할 최소 계측
+
+- Spring Boot JSON 로그에 요청 식별자, 인증 후 확정한 브랜드, 서비스명, 상태 코드, 처리 시간을 기록합니다.
+- k6 결과를 원시 데이터로 보관하여 브랜드별 지연과 오류를 비교합니다.
+- ECS/ALB/RDS/SQS의 AWS 기본 CloudWatch 메트릭과 확장 이벤트 시각을 기록합니다.
+- **같은 계측 조건에서 Source/Target을 다시 측정하기 전에는 관측 고도화 이후의 수치와 초기 수치를 직접 비교하지 않습니다.**
+
+## 후반 고도화 시 계측 경계
 
 - **HTTP:** `service.name`, `http.route`, 응답 코드, 처리 시간, `trace_id` 및 `span_id`.
 - **브랜드:** 인증 후 확정한 낮은 카디널리티의 `tenant_id`(A/B/C). 원본 토큰/사용자 ID/주문 ID를 메트릭 라벨로 사용하지 않습니다.
@@ -41,7 +48,7 @@ flowchart LR
 - **Worker/POS:** 전달 완료·실패·중복 처리 방지 결과를 주문 이벤트와 연결해 추적합니다.
 - **인프라:** ALB 5xx/TargetResponseTime, ECS Task CPU·메모리·Task 수, EC2/ASG 용량, SQS 대기 메시지·최고 대기 시간, RDS 연결 수·CPU·지연.
 
-## 필수 대시보드 및 알림
+## 후반 단계의 목표 대시보드 및 알림
 
 | 보드 / 알림 | 최소 지표 | 확인 목적 |
 |---|---|---|
@@ -66,10 +73,9 @@ flowchart LR
 
 ## 구현 순서
 
-1. HTTP 구조화 로그 및 브랜드별 RED(Requests·Errors·Duration) 메트릭.
-2. OpenTelemetry SDK와 Collector 연결, API/DB 구간 Trace.
-3. SQS Trace Context 전달 및 Worker/모의 POS 상관관계.
-4. CloudWatch 인프라 지표와 대시보드 및 경보.
-5. 부하·장애·Cutover 실험에서 실제 증거 캡처.
+1. **초기(1~5단계):** JSON 로그, 요청 처리 시간, k6 결과, AWS 기본 CloudWatch 지표만 확보.
+2. **6단계:** CloudWatch 단독 구성으로 요구를 충족하는지 검토하고 도구/Collector/Trace 백엔드를 결정.
+3. 선택한 도구로 API/DB 및 SQS/Worker 관측, 브랜드별 대시보드와 경보 구축.
+4. **7단계:** 두 아키텍처에 동일한 계측을 적용해 재측정하고 정상·지연·장애 증거를 수집.
 
 관측의 구현 범위를 고정하기 위한 문서이며, **설계·도구 도입만으로 완료 처리하지 않습니다.**
