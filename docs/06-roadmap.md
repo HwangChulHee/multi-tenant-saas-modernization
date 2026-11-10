@@ -5,16 +5,16 @@
 | 기간 (KST) | 목표 | 완료 판정 기준 |
 |---|---|---|
 | 11/10~11/13 | 최소 주문 도메인과 독립 배포 기준선 | Catalog/Order/Worker, 테스트 테넌트, 배포 방법 |
-| 11/14~11/17 | 공유 ECS on EC2 및 테넌트 보안 | EC2 Capacity Provider/ASG, 공유 Task 배포, 기존 브랜드별 DB 스키마 유지, 접근 거부 테스트 |
-| 11/18~11/21 | Task·EC2 이중 확장 및 비용 실험 | Service Auto Scaling → Capacity Provider → ASG 작동 확인, 브랜드별 반복 측정, 비용 가정 |
+| 11/14~11/17 | 공유 ECS on EC2·보안·기본 관측 계층 | EC2 Capacity Provider/ASG, 공유 Task, 스키마 유지, 교차 접근 거부, Trace/로그/메트릭 수집 |
+| 11/18~11/21 | Task·EC2 확장과 관측 기반 비용 실험 | Service Auto Scaling → Capacity Provider → ASG 확인, 브랜드별 대시보드·Trace로 병목 분석, 비용 가정 |
 | 11/22~11/24 | 브랜드 A 운영 중 전환·장애 연습 | 전환 1회, 정합성 검증, 롤백 조건·Runbook |
 | 11/25~11/27 | MSP형 보고서 및 지원 | ADR, 성능·보안·전환 보고서, 채용 지원 |
 
 ## 우선순위 및 범위 통제
 
-- **P0:** 브랜드별 ECS Fargate와 공유 ECS on EC2/ASG 배포, 기능 동일성, 기존 DB 스키마 유지, 테넌트 보안 경계, 재현 가능한 벤치마크.
+- **P0:** 브랜드별 ECS Fargate와 공유 ECS on EC2/ASG 배포, 기능 동일성, 기존 DB 스키마 유지, 테넌트 보안 경계, **OpenTelemetry Trace·구조화 로그·브랜드별 메트릭·CloudWatch 대시보드**, 재현 가능한 벤치마크.
 - **P1:** 브랜드 A Cutover, 부정 보안 테스트, 장애 실험 1건, 실제 롤백 또는 안전한 Forward-fix 절차 검증.
-- **P2:** FireLens, X-Ray, Bottlerocket, EC2 Warm Pool, 테넌트별 세분화 IAM Role, 고도화 CI/CD, 전체 브랜드 이전.
+- **P2:** FireLens 고도화, 고급 Trace 분석·샘플링 튜닝, Bottlerocket, EC2 Warm Pool, 테넌트별 세분화 IAM Role, 고도화 CI/CD, 전체 브랜드 이전. **기본 분산 추적은 P0**이며 선택 사항이 아닙니다.
 
 선택 사항은 실제로 배포·검증하지 않았다면 완료 아키텍처에 표시하지 않습니다.
 
@@ -23,6 +23,7 @@
 - 다른 개발자가 문서를 따라 두 환경을 재현할 수 있을 것.
 - API와 데이터 계층에서 교차 테넌트 접근 차단 검증을 통과할 것.
 - 실측 수치, 원시 결과, 비용 산정 가정을 남길 것.
+- 정상·지연 Trace, 관련 구조화 로그, 브랜드별 대시보드, 확장/장애 알림의 증거를 남길 것.
 - 최소 한 브랜드의 전환 과정과 주문 정합성 증거를 남길 것.
 - 고객용 변경 보고서와 리소스 정리 절차를 작성할 것.
 - AWS 예산 경보 및 `terraform destroy` 등 정리 절차를 명시할 것.
