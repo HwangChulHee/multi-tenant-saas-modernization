@@ -1,50 +1,51 @@
-# 01. Project scope and business requirements
+# 01. 프로젝트 범위와 비즈니스 요구사항
 
-**Status:** Proposal — 2026-11-10. Fictional business, independently designed experiment.
+**상태:** 2026-11-10 기준 기획안. 서비스와 고객사는 가상이며 실험 설계는 독립적으로 수행합니다.
 
-## Customer story
+## 고객 시나리오
 
-A restaurant-ordering SaaS hosts three franchise brands:
-- **Brand A:** high promotional bursts and high order volume.
-- **Brand B:** steady moderate traffic.
-- **Brand C:** small tenant with mostly idle capacity.
+하나의 외식 주문 SaaS가 다음 세 프랜차이즈 브랜드를 호스팅합니다.
 
-The incumbent per-brand ECS API and worker deployments offer straightforward isolation but have duplicated minimum tasks. The customer wants lower operational cost **without weakening availability or exposing other brands' data**.
+- **브랜드 A:** 프로모션 때 주문량이 급증하는 대형 브랜드.
+- **브랜드 B:** 비교적 일정한 트래픽을 유지하는 중형 브랜드.
+- **브랜드 C:** 평소에는 유휴 용량이 많은 소형 브랜드.
 
-## Concrete domain workflows
+기존 브랜드별 ECS API·Worker 구조는 격리가 단순하지만 브랜드별 최소 Task 수가 중복됩니다. 고객사는 **가용성과 테넌트 간 데이터 격리를 유지하면서 비용을 줄이는 방안**을 요청합니다.
 
-1. A signed-in brand operator manages the brand's catalog.
-2. A customer reads a menu and submits an order with an idempotency key.
-3. The Order API persists a tenant-owned order and publishes a fulfillment job.
-4. A worker delivers the order to a **simulated** brand store/POS endpoint and records the outcome.
-5. A brand operator can check order status and operational health.
+## 구체적인 서비스 흐름
 
-No actual payment or external POS integration. Store brands and traffic sizes are fictitious.
+1. 인증된 브랜드 운영자가 자사 메뉴를 관리합니다.
+2. 고객이 메뉴를 조회하고 멱등성 키를 포함해 주문을 생성합니다.
+3. Order API가 테넌트에 귀속된 주문을 저장하고 처리 이벤트를 발행합니다.
+4. Worker가 주문을 **모의** 매장/POS로 전달하고 결과를 기록합니다.
+5. 브랜드 운영자가 주문 상태와 처리 현황을 조회합니다.
 
-## Minimum API contract
+실제 결제나 외부 POS 연결은 구현하지 않습니다. 브랜드 명칭과 트래픽 수치는 가상입니다.
 
-| Endpoint | Required behavior |
+## 최소 API 계약
+
+| 엔드포인트 | 동작 |
 |---|---|
-| `GET /catalog` | Return authenticated tenant's menu |
-| `POST /orders` | Create order with stable idempotency key |
-| `GET /orders/{id}` | Enforce tenant scope, deny other tenants |
-| `GET /health`, `GET /ready` | Distinguish liveness and readiness |
-| Simulated POS receiver | Deduplicate delivery by event/order ID |
+| `GET /catalog` | 인증된 테넌트의 메뉴만 반환 |
+| `POST /orders` | 안정적인 멱등성 키로 주문 생성 |
+| `GET /orders/{id}` | 테넌트 범위 강제, 다른 테넌트 접근 거부 |
+| `GET /health`, `GET /ready` | 프로세스 생존과 서비스 준비 상태 구분 |
+| 모의 POS 수신기 | 이벤트/주문 ID 기준 중복 전달 무해화 |
 
-Do not accept a free-form `X-Tenant-ID` request header as authorization. Derive tenant context from validated identity and server-side mapping.
+클라이언트가 임의로 전달하는 `X-Tenant-ID` 헤더를 인가 근거로 사용하지 않습니다. 검증된 인증 정보와 서버 측 매핑으로 테넌트를 결정합니다.
 
-## In scope
+## 구현 범위
 
-- Deploy functionally identical dedicated/shared ECS variants using IaC.
-- Tenant authorization and a persistence-layer isolation boundary.
-- Controlled load experiments with raw evidence and complete cost assumptions.
-- At least one tenant's live migration, validation and rollback decision.
-- CloudWatch monitoring, one incident exercise and operational report.
+- 동일한 기능의 독립 ECS 및 공유 ECS 구조를 IaC로 배포.
+- 테넌트 인가와 데이터 저장 계층의 격리.
+- 원시 결과와 비용 산정 가정을 남기는 부하 실험.
+- 최소 1개 브랜드의 운영 중 전환, 검증, 롤백 판단.
+- CloudWatch 관측, 장애 실습 1건, 운영 보고서.
 
-## Out of scope
+## 제외 범위
 
-Real payments, real POS, 21 microservices, cross-account migration, multi-region active-active, complete enterprise security automation. These are optional future directions and must never be described as implemented.
+실제 결제, 외부 POS, 21개 마이크로서비스, 계정 간 마이그레이션, Multi-Region Active-Active, 기업 전체 보안 자동화. 향후 확장할 수 있지만 구현 전에는 완료한 기능으로 표시하지 않습니다.
 
-## Quality gates
+## 품질 기준
 
-Define p95 targets, acceptable error rate, load profiles and cost accounting rules **before** publishing comparative conclusions. Record any inability to meet targets transparently.
+비교 결과를 발표하기 전에 p95 목표, 허용 오류율, 부하 프로필, 비용 계산 원칙을 정의합니다. 목표 미달이나 실험 제약은 숨기지 않고 기록합니다.
