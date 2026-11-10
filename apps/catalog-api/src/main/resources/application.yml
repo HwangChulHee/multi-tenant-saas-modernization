@@ -10,3 +10,6 @@ management:
       group:
         readiness:
           include: readinessState,db
+
+app:
+  db-role: catalog

@@ -12,6 +12,7 @@ management:
           include: readinessState,db
 
 app:
+  db-role: worker
   sqs:
     endpoint: ${SQS_ENDPOINT:}
     region: ${AWS_REGION}

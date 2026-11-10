@@ -12,6 +12,7 @@ management:
           include: readinessState,db
 
 app:
+  db-role: order
   sqs:
     endpoint: ${SQS_ENDPOINT:}
     region: ${AWS_REGION}

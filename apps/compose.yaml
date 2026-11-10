@@ -8,11 +8,6 @@ x-app: &app
     retries: 12
     start_period: 15s
 
-x-db-env: &db-env
-  SPRING_DATASOURCE_URL: ${DB_URL:?set DB_URL}
-  SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:?set POSTGRES_USER}
-  SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
-
 x-sqs-env: &sqs-env
   SQS_ENDPOINT: ${SQS_ENDPOINT:?set SQS_ENDPOINT}
   AWS_REGION: ${AWS_REGION:?set AWS_REGION}
@@ -31,6 +26,29 @@ services:
       interval: 5s
       timeout: 3s
       retries: 12
+
+  migrate:
+    image: postgres:17.6-alpine
+    entrypoint: ["/bin/sh", "/migrations/migrate.sh"]
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      CATALOG_BRAND_A_PASSWORD: ${CATALOG_BRAND_A_PASSWORD:?set CATALOG_BRAND_A_PASSWORD}
+      CATALOG_BRAND_B_PASSWORD: ${CATALOG_BRAND_B_PASSWORD:?set CATALOG_BRAND_B_PASSWORD}
+      CATALOG_BRAND_C_PASSWORD: ${CATALOG_BRAND_C_PASSWORD:?set CATALOG_BRAND_C_PASSWORD}
+      ORDER_BRAND_A_PASSWORD: ${ORDER_BRAND_A_PASSWORD:?set ORDER_BRAND_A_PASSWORD}
+      ORDER_BRAND_B_PASSWORD: ${ORDER_BRAND_B_PASSWORD:?set ORDER_BRAND_B_PASSWORD}
+      ORDER_BRAND_C_PASSWORD: ${ORDER_BRAND_C_PASSWORD:?set ORDER_BRAND_C_PASSWORD}
+      WORKER_BRAND_A_PASSWORD: ${WORKER_BRAND_A_PASSWORD:?set WORKER_BRAND_A_PASSWORD}
+      WORKER_BRAND_B_PASSWORD: ${WORKER_BRAND_B_PASSWORD:?set WORKER_BRAND_B_PASSWORD}
+      WORKER_BRAND_C_PASSWORD: ${WORKER_BRAND_C_PASSWORD:?set WORKER_BRAND_C_PASSWORD}
+    volumes:
+      - ./db:/migrations:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   localstack:
     image: localstack/localstack:4.12.0
@@ -53,14 +71,20 @@ services:
       args:
         SERVICE: catalog-api
     environment:
-      <<: *db-env
+      DB_URL: ${DB_URL:?set DB_URL}
+      DB_BRAND_A_PASSWORD: ${CATALOG_BRAND_A_PASSWORD:?set CATALOG_BRAND_A_PASSWORD}
+      DB_BRAND_B_PASSWORD: ${CATALOG_BRAND_B_PASSWORD:?set CATALOG_BRAND_B_PASSWORD}
+      DB_BRAND_C_PASSWORD: ${CATALOG_BRAND_C_PASSWORD:?set CATALOG_BRAND_C_PASSWORD}
+      JWT_ISSUER: ${JWT_ISSUER:?set JWT_ISSUER}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:?set JWT_AUDIENCE}
+      LOCAL_JWT_SECRET: ${LOCAL_JWT_SECRET:?generate LOCAL_JWT_SECRET}
       ACTIVE_BRANDS: ${ACTIVE_BRANDS:?set ACTIVE_BRANDS}
       SERVER_PORT: ${CATALOG_PORT:?set CATALOG_PORT}
     ports:
       - "127.0.0.1:${CATALOG_PORT}:${CATALOG_PORT}"
     depends_on:
-      postgres:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
   order-api:
     <<: *app
@@ -69,14 +93,21 @@ services:
       args:
         SERVICE: order-api
     environment:
-      <<: [*db-env, *sqs-env]
+      <<: *sqs-env
+      DB_URL: ${DB_URL:?set DB_URL}
+      DB_BRAND_A_PASSWORD: ${ORDER_BRAND_A_PASSWORD:?set ORDER_BRAND_A_PASSWORD}
+      DB_BRAND_B_PASSWORD: ${ORDER_BRAND_B_PASSWORD:?set ORDER_BRAND_B_PASSWORD}
+      DB_BRAND_C_PASSWORD: ${ORDER_BRAND_C_PASSWORD:?set ORDER_BRAND_C_PASSWORD}
+      JWT_ISSUER: ${JWT_ISSUER:?set JWT_ISSUER}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:?set JWT_AUDIENCE}
+      LOCAL_JWT_SECRET: ${LOCAL_JWT_SECRET:?generate LOCAL_JWT_SECRET}
       ACTIVE_BRANDS: ${ACTIVE_BRANDS:?set ACTIVE_BRANDS}
       SERVER_PORT: ${ORDER_PORT:?set ORDER_PORT}
     ports:
       - "127.0.0.1:${ORDER_PORT}:${ORDER_PORT}"
     depends_on:
-      postgres:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       localstack:
         condition: service_healthy
 
@@ -87,14 +118,18 @@ services:
       args:
         SERVICE: fulfillment-worker
     environment:
-      <<: [*db-env, *sqs-env]
+      <<: *sqs-env
+      DB_URL: ${DB_URL:?set DB_URL}
+      DB_BRAND_A_PASSWORD: ${WORKER_BRAND_A_PASSWORD:?set WORKER_BRAND_A_PASSWORD}
+      DB_BRAND_B_PASSWORD: ${WORKER_BRAND_B_PASSWORD:?set WORKER_BRAND_B_PASSWORD}
+      DB_BRAND_C_PASSWORD: ${WORKER_BRAND_C_PASSWORD:?set WORKER_BRAND_C_PASSWORD}
       ACTIVE_BRANDS: ${ACTIVE_BRANDS:?set ACTIVE_BRANDS}
       SERVER_PORT: ${WORKER_PORT:?set WORKER_PORT}
     ports:
       - "127.0.0.1:${WORKER_PORT}:${WORKER_PORT}"
     depends_on:
-      postgres:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       localstack:
         condition: service_healthy
 

@@ -37,3 +37,19 @@ configure([project(':catalog-api'), project(':order-api'), project(':fulfillment
         runtimeOnly 'org.postgresql:postgresql'
     }
 }
+
+project(':common') {
+    dependencies {
+        compileOnly platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        compileOnly 'org.springframework.boot:spring-boot-starter-jdbc'
+        compileOnly 'org.springframework.boot:spring-boot-starter-actuator'
+        compileOnly 'org.springframework.boot:spring-boot-starter-web'
+        compileOnly 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    }
+}
+
+configure([project(':catalog-api'), project(':order-api')]) {
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    }
+}
