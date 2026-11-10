@@ -1,12 +1,13 @@
 # 애플리케이션
 
-Java 21과 Spring Boot로 로컬 멀티테넌트 Catalog 및 Order API를 실행한다.
+Java 21과 Spring Boot로 로컬 멀티테넌트 주문 흐름을 실행한다.
 각 서비스는 독립 실행 JAR와 컨테이너 이미지로 빌드된다.
 
 ## 개발 환경
 
 - 로컬 빌드 및 직접 실행에는 JDK 21이 필요하다. Gradle은 저장소에 포함된 Wrapper를 사용한다.
 - 컨테이너 실행에는 Docker Engine과 Docker Compose v2가 필요하다. WSL에서는 사용하는 배포판에서 Docker 엔진에 연결되는지 `docker version`으로 확인한다.
+- 로컬 키 생성 및 통합 테스트에는 OpenSSL과 Python 3이 필요하다.
 - 처음 빌드할 때 Gradle 배포본, 빌드 의존성, 컨테이너 이미지를 내려받을 수 있어야 한다.
 
 이하 명령은 모두 저장소의 `apps/`에서 실행한다.
@@ -17,12 +18,15 @@ Java 21과 Spring Boot로 로컬 멀티테넌트 Catalog 및 Order API를 실행
 ./gradlew clean build
 ```
 
-Catalog, Order, Worker를 직접 실행할 때는 `DB_URL`, `ACTIVE_BRANDS`, 활성 브랜드별
+모든 서비스를 직접 실행할 때는 `SERVER_PORT`를 설정한다.
+Catalog, Order, Worker에는 `DB_URL`, `ACTIVE_BRANDS`, 활성 브랜드별
 `DB_BRAND_A_PASSWORD` 등의 런타임 비밀번호를 넘긴다. Catalog와 Order에는
 `JWT_ISSUER`, `JWT_AUDIENCE`, `LOCAL_JWT_SECRET` 또는 `JWT_JWK_SET_URI`도 필요하다.
 Order와 Worker는 `AWS_REGION` 및 활성 브랜드의 `SQS_BRAND_A_QUEUE_URL` 등도 받는다.
 로컬 SQS에 연결할 때는 `SQS_ENDPOINT`와 테스트용 AWS 자격 증명을 설정한다.
-Worker는 `POS_URL`과 `POS_SHARED_TOKEN`을 사용한다. Mock POS는 전용 DB 계정 및 동일한 공유 토큰으로 실행한다.
+Worker는 `POS_URL`과 `POS_SHARED_TOKEN`을 사용한다. Mock POS는 같은 공유 토큰과 전용 DB 계정
+`mock_pos_app`을 사용한다. Mock POS에 `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`,
+`SPRING_DATASOURCE_PASSWORD`를 설정한다.
 DB는 실행하는 프로세스에서 접근할 수 있어야 한다.
 
 개별 이미지는 예를 들어 `docker build --build-arg SERVICE=catalog-api -t catalog-api:local .`로 빌드한다.
@@ -30,7 +34,7 @@ DB는 실행하는 프로세스에서 접근할 수 있어야 한다.
 
 ```bash
 cp -n .env.example .env
-# 최초 1회, LOCAL_JWT_SECRET이 비어 있는 경우
+# 최초 1회, 각 키가 비어 있을 때 생성
 sed -i "s/^LOCAL_JWT_SECRET=$/LOCAL_JWT_SECRET=$(openssl rand -hex 32)/" .env
 sed -i "s/^POS_SHARED_TOKEN=$/POS_SHARED_TOKEN=$(openssl rand -hex 32)/" .env
 docker compose up --build --wait
@@ -59,7 +63,7 @@ PostgreSQL과 LocalStack은 Compose 네트워크 내부에서 접근한다.
 ## 동작 확인
 
 아래 예시는 기본 포트 기준이다. `/health`는 프로세스 생존을 확인한다.
-`/ready`는 서비스 준비 상태를 확인하며 Catalog, Order, Worker는 PostgreSQL 연결도 확인한다.
+`/ready`는 네 서비스의 준비 상태와 PostgreSQL 연결을 확인한다.
 Worker의 HTTP 포트는 상태 확인용이다. 각 서비스는 서비스명이 포함된 JSON 로그를 stdout에 남긴다.
 
 ```bash
@@ -77,7 +81,7 @@ docker compose exec -T localstack awslocal sqs list-queues
 
 ```text
 apps/
-├── common/                # 공통 Actuator 및 로그 설정
+├── common/                # 공통 상태 확인, 테넌트 DB·보안·SQS 설정
 ├── catalog-api/           # Catalog API
 ├── order-api/             # Order API
 ├── fulfillment-worker/    # Fulfillment Worker
@@ -137,6 +141,31 @@ Ubuntu 24.04 WSL에서 Gradle 전체 빌드 및 Compose 통합 테스트 9건을
 기존 Phase 1-2 볼륨의 주문 5건도 V002 적용 후 POS까지 처리됐다. 신규 주문의 전체 경로,
 SQS 중복 전달, SQS 발행 실패 후 복구, 잘못된 브랜드 메시지의 DLQ 이동을 확인했다.
 
+## Phase 1-4 보안 및 복구 검증
+
+```bash
+./gradlew clean build
+./tests/run.sh
+```
+
+통합 테스트는 포트 18081~18084를 사용한다. 별도의 Compose 프로젝트와 임시 키, PostgreSQL 볼륨을
+생성하며 실행이 끝나면 테스트 컨테이너와 볼륨을 정리한다. JWT는 로컬 키로 발급한다.
+
+Ubuntu 24.04 WSL에서 통합 테스트 18건을 통과했다.
+
+- **API·테넌트** — JWT 위조·만료·issuer·audience 오류 거부, 헤더 위조 무시, 다른 브랜드 주문 404,
+  9개 런타임 역할과 POS 계정의 교차 스키마 접근 거부, 동일 이미지의 단일 브랜드 설정을 확인했다.
+- **주문·비동기 처리** — 동일 키로 주문을 동시에 요청해도 1건만 생성됐다.
+  Publisher 두 개를 실행한 상태에서 세 브랜드 주문 12건이 완료됐고, 주문마다 Outbox·처리 원장·POS 수락 기록이 각 1건이었다.
+  SQS 재전달 후에도 POS 수락 수는 유지됐다.
+- **복구** — POS 수락 직후 Worker를 SIGKILL로 종료해도 메시지가 재처리됐다.
+  POS 타임아웃·일시적 503, SQS 발행 실패를 복구했다. POS 실패가 지속되면 메시지는 브랜드 DLQ에 남고
+  주문은 `PENDING`을 유지했다. POS 복구 후 LocalStack SQS redrive로 주문을 완료했다.
+- **로그** — Order API, Worker, POS에서 같은 `request_id`와 `tenant_id`를 확인했다.
+
+외부 JWT 발급자와 AWS IAM·ECS 배포는 별도 환경에서 검증한다.
+
 ## 다음 구현 단계
 
-JWT 부정 테스트, Worker 강제 종료, POS 지연·실패, DLQ redrive와 다중 브랜드 주문을 자동화한다.
+Phase 1-5에서는 로컬 부하 시나리오와 초기 성능 기준을 정의하고, 테스트 데이터와 실행 절차를 재현 가능하게 정리한다.
+Outbox·Worker 처리 지연과 큐 적체를 확인한 뒤 Source 배포에 사용할 환경 설정 및 운영 절차를 확정한다.

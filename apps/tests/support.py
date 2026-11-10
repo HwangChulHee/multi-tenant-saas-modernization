@@ -51,9 +51,10 @@ def order(brand, key=None, quantity=1):
                    headers={"Idempotency-Key": key or uuid.uuid4().hex})
 
 
-def compose(*args, check=True):
-    return subprocess.run(["docker", "compose", "--env-file", ".env.example", *args],
-                          stdin=subprocess.DEVNULL, capture_output=True, text=True, check=check)
+def compose(*args, check=True, overrides=None):
+    return subprocess.run(["docker", "compose", "-f", "compose.yaml", "--env-file", ".env.example", *args],
+                          stdin=subprocess.DEVNULL, capture_output=True, text=True, check=check,
+                          env={**os.environ, **(overrides or {})})
 
 
 def sql(statement, *, user="ordersaas", password="local-dev-only", check=True):
