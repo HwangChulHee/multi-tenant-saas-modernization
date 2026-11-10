@@ -1,3 +1,5 @@
-# Experiments
+# 실험
 
-Store reproducible k6 workloads, configuration and redacted metrics here. Do not commit AWS credentials, payment data or unredacted request logs. All benchmark tables currently contain placeholders, not results.
+재현 가능한 k6 시나리오, 실행 환경 설정, 민감 정보를 제거한 결과를 보관할 디렉터리입니다.
+
+AWS 자격 증명, 실제 고객 데이터, 원본 요청 로그 등 민감 정보는 커밋하지 않습니다. 현재 벤치마크 표는 미측정 상태입니다.
