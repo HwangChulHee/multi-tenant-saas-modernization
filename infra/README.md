@@ -1,3 +1,5 @@
-# Infrastructure
+# 인프라
 
-Terraform source and target environments will be added here. Initial baseline: tenant-dedicated ECS services; proposed target: pooled ECS services. Declare AWS budget, access, Region and teardown prerequisites before provisioning.
+Terraform 기반 기존(Source: 브랜드별 독립 ECS 서비스) 및 개선(Target: 공유 ECS 서비스) 환경 구성을 이 디렉터리에 추가할 예정입니다.
+
+AWS 리소스를 배포하기 전에 예산, 접근 권한, Region, 정리 방법을 정의합니다. 아직 인프라 배포는 수행하지 않았습니다.
