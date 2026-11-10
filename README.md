@@ -1,69 +1,69 @@
-# Multi-Tenant SaaS Infrastructure Modernization
+# 멀티테넌트 SaaS 인프라 현대화
 
-> **Status: Planning. No AWS deployment, security validation or benchmarks have been completed.**
+> **진행 상태: 설계 단계. 아직 AWS 배포, 보안 검증, 성능 측정을 수행하지 않았습니다.**
 >
-> An independent, scaled-down infrastructure modernization project **inspired by** [Cognizant OrderServ's multi-tenant ECS case](https://aws.amazon.com/blogs/architecture/how-orderserv-achieved-up-to-64-cost-savings-with-multi-tenant-ecs/) (AWS Architecture Blog, 2026-11-05). Not affiliated with Cognizant; no production source code or reported performance results are reproduced.
+> 이 프로젝트는 [Cognizant OrderServ의 멀티테넌트 ECS 현대화 사례](https://aws.amazon.com/blogs/architecture/how-orderserv-achieved-up-to-64-cost-savings-with-multi-tenant-ecs/) (AWS Architecture Blog, 2026-11-05)에서 영감을 받은 **독립적인 축소 실험**입니다. Cognizant와 무관하며, 실제 서비스 코드나 공식 사례의 성과를 재현했다고 주장하지 않습니다.
 
-## Business scenario
+## 프로젝트 배경
 
-A fictional multi-brand restaurant-ordering SaaS hosts **three independent brands**. Its initial design deploys separate ECS API and worker services for each brand to achieve clear operational isolation. As the tenant count grows, duplicated minimum task capacity and operating overhead increase.
+가상의 외식 주문 SaaS가 프랜차이즈 브랜드 **3개**를 운영합니다. 기존에는 브랜드별로 ECS API 및 Worker 서비스를 독립 배포해 운영상 격리를 확보했습니다. 그러나 브랜드가 증가하면서 최소 Task 수에 따른 유휴 자원과 운영 관리 비용이 늘어납니다.
 
-We will test a gradual transition to **shared ECS compute** while measuring the trade-offs in **cost, scalability, tenant security, and live migration**. The objective is not to prove shared compute is always superior, but to determine under which constraints it is appropriate.
+이 프로젝트는 브랜드별 독립 구조를 **공유 ECS 컴퓨팅 구조로 단계적으로 전환**하면서 **비용, 확장성, 테넌트 보안 격리, 운영 중 마이그레이션**의 상충 관계를 측정합니다. 공유 구조가 항상 우수하다는 결론을 미리 정하지 않습니다.
 
-## Product scope
+## 서비스 범위
 
-| Component | Minimal behavior | Infrastructure concern |
+| 구성 요소 | 최소 기능 | 인프라 관점 |
 |---|---|---|
-| Catalog API | Brand-specific menu reads | Read traffic; tenant authorization |
-| Order API | Place/read an order with idempotency key | Consistency; tenant data isolation |
-| Fulfillment Worker | SQS event to simulated store/POS receiver | Retries; duplication; reliability |
-| Tenant routing/config | Select dedicated/shared deployment per brand | Migration waves and rollback |
+| Catalog API | 브랜드별 메뉴 조회 | 읽기 부하, 테넌트 인가 |
+| Order API | 주문 등록·조회, 멱등성 키 사용 | 정합성, 데이터 격리 |
+| Fulfillment Worker | SQS 이벤트를 모의 매장/POS로 전달 | 재시도, 중복 처리, 신뢰성 |
+| 테넌트 라우팅·설정 | 브랜드별 독립/공유 환경 선택 | 단계적 전환과 롤백 |
 
-Excluded: real payments, full POS integrations, 21 microservices, production-grade loyalty services, and cross-account migration (tracked as an independent future learning topic).
+실제 결제, 외부 POS 연동, 21개 마이크로서비스, 상용 멤버십 기능, **AWS 계정 간 마이그레이션**은 범위에서 제외합니다. 계정 간 이전은 별도 학습 과제입니다.
 
-## Before / After
+## 아키텍처 비교
 
-| Dimension | Before: dedicated | After: shared |
+| 항목 | 기존: 브랜드별 독립 구조 | 개선안: 공유 구조 |
 |---|---|---|
-| Compute | Separate ECS services/task sets per brand | Shared ECS API/worker services |
-| Capacity | Per-brand minimum tasks | Pooled task capacity |
-| Isolation | Deployment and role separation | Verified tenant identity, authorization, database boundary |
-| Scaling | Brand-local | Shared pool; noisy-neighbor risk |
-| Migration | Existing dedicated endpoint | Brand-by-brand cutover, single authoritative writer |
+| 컴퓨팅 | 브랜드별 ECS 서비스·Task | 공유 ECS API·Worker 서비스 |
+| 용량 | 브랜드마다 최소 Task 유지 | 전체 브랜드가 Task 용량 공유 |
+| 격리 | 배포·Role 분리 | 검증된 테넌트 인증·인가·DB 격리 |
+| 확장 | 브랜드별 확장 | 공유 확장, Noisy Neighbor 위험 |
+| 전환 | 브랜드별 기존 엔드포인트 | 브랜드별 Cutover, 단일 쓰기 주체 보장 |
 
-Separate ECS *clusters* are **not automatically** equivalent to stronger authorization or data separation. An implementation decision on services, task roles, queues, and databases is recorded in [architecture](docs/02-architecture.md).
+**ECS 클러스터를 분리했다고 해서 접근 권한이나 데이터 격리가 자동으로 보장되는 것은 아닙니다.** 서비스, Task Role, Queue, DB에 관한 구체적 결정은 [아키텍처 설계](docs/02-architecture.md)에 정리합니다.
 
-## Four validation tracks
+## 4대 검증 영역
 
-1. **Cost:** measured resource-hours and transparent monthly estimates under matching availability/SLO assumptions.
-2. **Scalability:** per-brand latency and errors during idle, steady, promotional burst, and all-brand workloads; detect noisy-neighbor effects.
-3. **Security:** negative cross-tenant API and database tests; trusted tenant identity; least-privilege AWS access.
-4. **Live transition:** migrate Brand A under synthetic load, verify order counts and SQS processing, and demonstrate cutover and a bounded rollback procedure.
+1. **비용:** 동일한 가용성 및 SLO 조건에서 리소스 사용량과 월간 예상 비용 비교.
+2. **확장성:** 유휴·정상·프로모션 폭증·전체 브랜드 동시 부하에서 브랜드별 지연과 오류율 측정. Noisy Neighbor 확인.
+3. **보안:** 브랜드 간 API/DB 접근 차단, 신뢰 가능한 테넌트 식별, 최소 권한 검증.
+4. **운영 중 전환:** 브랜드 A를 운영 부하 상태에서 전환하며 주문 수·SQS 처리 결과를 검증하고 제한 조건이 명확한 롤백 절차 실험.
 
-**Metrics and outcomes are TBD until measured.** Source article results are third-party observations, not results of this project.
+**실측 결과는 아직 없습니다.** 공식 사례에 나온 절감률이나 확장 시간은 이 프로젝트의 성과가 아닙니다.
 
-## Documentation
+## 문서
 
-- [01 Business scope](docs/01-project-scope.md)
-- [02 Architecture / design decisions](docs/02-architecture.md)
-- [03 Experiments / cost model](docs/03-experiment-plan.md)
-- [04 Tenant security](docs/04-security-plan.md)
-- [05 Migration runbook](docs/05-migration-runbook.md)
-- [06 November roadmap](docs/06-roadmap.md)
-- [07 References](docs/07-references.md)
+- [01. 프로젝트 범위 및 요구사항](docs/01-project-scope.md)
+- [02. 아키텍처 및 설계 의사결정](docs/02-architecture.md)
+- [03. 성능·확장성·비용 실험 계획](docs/03-experiment-plan.md)
+- [04. 테넌트 보안 설계](docs/04-security-plan.md)
+- [05. 단계별 마이그레이션 Runbook](docs/05-migration-runbook.md)
+- [06. 11월 로드맵](docs/06-roadmap.md)
+- [07. 참고 자료](docs/07-references.md)
 
-## Repository layout
+## 디렉터리
 
 ```text
-apps/            # API / worker / simulated POS
-infra/           # Terraform and environment configuration
-experiments/     # load tests, scenario definitions, redacted results
-docs/            # requirements, ADRs, plans, reports
+apps/            # API, Worker, 모의 POS
+infra/           # Terraform 및 환경별 설정
+experiments/     # 부하 시나리오와 민감 정보를 제거한 실험 결과
+docs/            # 요구사항, ADR, 계획서, 결과 보고서
 ```
 
-## Guardrails
+## 기본 원칙
 
-- No real customer data or payment information.
-- Do not commit credentials or actual customer identifiers.
-- Configure AWS budgets/alerts and document teardown before provisioning.
-- Distinguish hypothetical requirements, tested results and third-party claims.
+- 실제 고객 정보나 결제 정보 사용 금지.
+- 자격 증명과 개인 식별 정보 Git 커밋 금지.
+- AWS 생성 전에 예산 경보와 리소스 정리 절차 마련.
+- 가상 요구사항, 실제 측정 결과, 외부 사례의 주장을 명확히 구분.
