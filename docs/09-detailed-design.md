@@ -8,7 +8,7 @@
 - **Target:** 단일 공유 ECS on EC2 클러스터에서 Catalog API / Order API / Worker = 3개 ECS Service, EC2 Auto Scaling Group과 ECS EC2 Capacity Provider 연동.
 - **DB:** 하나의 기존 RDS PostgreSQL 데이터베이스 `ordersaas`, 브랜드별 `brand_a`, `brand_b`, `brand_c` 스키마 유지. **DB 데이터 복사 또는 DB 마이그레이션은 실시하지 않음.**
 - **SQS:** 브랜드별 Queue 및 DLQ 유지; 공유 Worker가 인증/검증된 브랜드 메시지를 처리. Queue 통합은 필수 범위에서 제외.
-- **필수:** Terraform, OpenTelemetry 계측, CloudWatch 로그·메트릭·대시보드·알림, Trace 백엔드(X-Ray 초기 후보), 비용·확장성·테넌트 보안·전환 실험.
+- **필수 초기:** Terraform, 구조화 JSON 로그, 요청 처리 시간, k6 원시 결과, AWS 기본 CloudWatch 메트릭, 비용·확장성·테넌트 보안·전환 실험. **관측 도구 선택/대시보드/Trace 구축은 브랜드 A Cutover 이후 6단계로 연기**하며 최종 비교 전 동일 조건으로 재측정.
 - **제외:** 실제 결제/POS, 프론트엔드, EKS, AWS 계정 간 이전, EC2 Warm Pool/Bottlerocket(후속 실험 후보).
 
 ## 2. 기술 스택
@@ -17,7 +17,7 @@
 - PostgreSQL: JDBC/JPA 등 구현 시 최소 복잡도를 우선하되, 실제 권한 테스트를 필수로 한다.
 - k6: 브랜드별 합성 부하, 응답 지연 및 실패 측정.
 - Terraform: Source와 Target을 별도 모듈/환경으로 관리하되 **RDS·Queue 등 공통 상태를 전환 과정에서 파괴하지 않도록** 모듈 경계를 분리한다.
-- OpenTelemetry SDK 및 ADOT Collector: Trace와 서비스 계측. CloudWatch Logs, AWS 인프라 메트릭 및 Alarm. Trace 저장/조회는 X-Ray를 첫 후보로 삼고 비용·지원 경로를 확인한다.
+- 초기에는 Spring Boot JSON 로그·요청 처리 시간과 k6, CloudWatch 기본 지표만 사용한다. OpenTelemetry/ADOT/X-Ray/Prometheus/Grafana는 **6단계에서 비교 후 선택**하고 비용·지원 경로를 확인한다.
 
 ## 3. 비즈니스 요청 흐름과 계약
 
@@ -74,13 +74,13 @@ RDS PostgreSQL
 - Private Task가 ECR/SQS/CloudWatch/Secrets Manager 등에 연결하는 경로는 NAT 또는 VPC Endpoint의 실제 요구사항과 비용을 비교해 결정. 배포 후 안전한 정리 절차를 문서화한다.
 - 개발 편의를 위해 보안 그룹이나 RDS를 인터넷 전체에 개방하지 않는다.
 
-## 8. 필수 관측
+## 8. 관측 — 최소 기능 우선, 고도화는 6단계
 
-- Source/Target 공통 OpenTelemetry SDK, ADOT Collector, CloudWatch Logs(JSON), CloudWatch 인프라 메트릭·대시보드·Alarm.
-- Trace 조회 백엔드: X-Ray 첫 후보. API→DB→SQS→Worker→모의 POS의 Trace Context 및 Correlation ID를 전달한다.
+- **초기:** Source/Target 공통 JSON 로그(`request_id`, `tenant_id`, 상태·처리 시간), k6 원시 결과, AWS 기본 CloudWatch 지표. 별도 Collector/대시보드/Trace 저장소는 지금 구축하지 않는다.
+- **후반:** CloudWatch 단독 또는 OpenTelemetry·X-Ray·Prometheus·Grafana 등을 비교해 선택. API→DB→SQS→Worker→모의 POS의 Trace Context 및 Correlation ID 연계는 고도화 단계 목표다.
 - 브랜드 A/B/C별 RPS, p50/p95/p99, 오류율, 주문 처리 지연, DLQ, SQS 메시지 대기, RDS CPU/연결, ECS Task desired/running/pending, EC2 ASG min/desired/in-service, Capacity Provider 이벤트.
-- 로그는 `trace_id`, `span_id`, `service_name`, `tenant_id`, `deployment_version`을 담되, 원본 인증 토큰과 고객 데이터는 담지 않는다.
-- 주문 ID·사용자 ID 등을 메트릭 라벨에 넣지 않는다. 각 부하 실험에서 대시보드 + 실패/지연 Trace + 관련 로그를 남긴다.
+- 초기 로그는 `request_id`, `service_name`, `tenant_id`, `deployment_version`을 담고, Trace를 도입한 후 `trace_id`·`span_id`를 추가한다. 원본 인증 토큰과 고객 데이터는 담지 않는다.
+- 주문 ID·사용자 ID 등을 메트릭 라벨에 넣지 않는다. 초기 기준선은 k6·CloudWatch 자료를 남기고, 관측 고도화 이후 양쪽 환경을 **동일 조건으로 재측정**해 대시보드·실패/지연 Trace 증거를 확보한다.
 - 상세 내용은 [08. 관측 계층](08-observability.md).
 
 ## 9. 마이그레이션 (DB 이동 없음)
@@ -103,21 +103,21 @@ RDS PostgreSQL
 
 ## 11. 구현 순서
 
-1. 앱 계약·테스트 데이터·Docker Compose.
+1. 앱 계약·테스트 데이터·Docker Compose 및 JSON 로그.
 2. 네트워크·RDS·SQS 공통 Terraform과 Source 브랜드별 ECS Fargate.
-3. OpenTelemetry/CloudWatch 계측 및 Source 기준선.
+3. **최소 관측만 사용해** Source 기준선 측정(k6·기본 CloudWatch·비용).
 4. Target ECS on EC2 / Capacity Provider / ASG + 부정 권한 검증.
 5. A 테넌트 단계적 Cutover + Worker 중복 소비 방지.
-6. k6 비교 실험, 장애·확장 이벤트, 관측 기반 원인 분석.
-7. 고객 변경 보고서, 비용표, ADR, 리소스 정리.
+6. **관측 도구 선택 및 고도화**(동일 조건 비교에 필요한 계측·대시보드·경보·추적).
+7. Source/Target 재측정, k6 비용·장애·확장·Noisy Neighbor 실험, 운영 보고서, 리소스 정리.
 
 ## 12. 설계에서 아직 검증이 필요한 파라미터
 
-- `m6i.large`에서 `awsvpc` ENI·Collector·Agent를 고려한 실제 최대 Task 배치 수.
+- `m6i.large`에서 `awsvpc` ENI 및 기본 운영 오버헤드를 고려한 실제 최대 Task 배치 수. 관측 도구 도입 시 예약 자원을 재산정할 것.
 - NAT Gateway와 VPC Endpoint 비용을 포함한 실제 2-AZ 테스트 예산.
 - Worker 다중 SQS 소비 방식과 브랜드별 IAM 권한 위임, DB 자격 증명 캐시 만료 정책.
 - Spring Boot 실제 메모리 소비와 지표 기반 확장 임계값.
-- CloudWatch/X-Ray Collector 전송 경로와 Trace 샘플링 비용.
+- 6단계에서 결정할 관측 도구의 배포 위치, Trace 수집 경로·샘플링 및 운영 비용.
 
 **이 항목들은 구현 과정에서 검증 후 ADR로 확정하며, 미검증 가정을 완료된 결과처럼 표기하지 않는다.**
 
