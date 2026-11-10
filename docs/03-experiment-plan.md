@@ -1,39 +1,42 @@
-# 03. Performance, scalability and cost experiment plan
+# 03. 성능·확장성·비용 실험 계획
 
-**Status:** Protocol, **no measured results**.
+**상태:** 실험 프로토콜만 정의했습니다. **실측 결과 없음.**
 
-## Workloads
+## 부하 시나리오
 
-- **Idle:** no requests while capacity is maintained.
-- **Steady:** consistent, mixed catalog reads and order writes.
-- **Single-tenant burst:** Brand A promotional spike while B/C keep baseline traffic.
-- **All-tenant burst:** concurrent demand spike in A/B/C.
-- **Failure:** terminate one worker/task or inject a failure into one shared instance.
+- **유휴 상태:** 요청은 없지만 최소 용량을 유지하는 상황.
+- **일정한 부하:** 메뉴 조회와 주문 쓰기가 일정 비율로 지속되는 상황.
+- **단일 테넌트 폭증:** 브랜드 A만 프로모션 부하를 받고 B/C는 기본 부하 유지.
+- **전체 테넌트 폭증:** A/B/C 모두 동시에 증가.
+- **장애:** Worker/Task 하나를 종료하거나 공유 인스턴스의 오류를 주입.
 
-Use identical application code, data shape, Region and per-test input. Normalize resource ceilings and availability objectives where possible. Warm up runtimes; measure sustained windows; repeat each scenario >=3 times and record environment versions and limitations.
+애플리케이션 코드, 데이터 분포, AWS Region, 테스트 입력을 최대한 동일하게 유지합니다. 가능한 경우 자원 상한과 가용성 목표를 맞춥니다. 런타임 워밍업 후 지속 측정하고, 시나리오별 **3회 이상 반복**하며 환경 버전과 제약을 기록합니다.
 
-## Primary measurements
+## 주요 측정값
 
-Per tenant: request rate, p50/p95/p99 API latency, error %, successful order count, order-to-fulfillment delay, duplicate business effects (target **0**), denied cross-tenant access (target **all**). Infrastructure: ECS tasks/CPU/memory, scaling lag, SQS depth/oldest age, DB utilization, downtime during cutover.
+- **브랜드별:** RPS, API p50/p95/p99, 오류율, 성공 주문 수, 주문→전달 지연, 실제 비즈니스 중복 처리 수(목표 **0건**), 교차 테넌트 접근 차단 여부.
+- **인프라:** ECS Task·CPU·메모리, 확장 반응 시간, SQS 적체량·최고 대기 시간, DB 이용률, 전환 시 중단 시간.
 
-## Hypotheses (to test, not claim)
+## 검증할 가설
 
-- H1: pooling reduces duplicated idle compute at low tenant utilization.
-- H2: dedicated services better limit some noisy-neighbor effects.
-- H3: tenant fairness controls and more warm shared capacity trade cost against burst isolation.
-- H4: progressive tenant migration can bound the interruption and protect data integrity.
+- **H1:** 낮은 평균 이용률에서는 공유 구조가 브랜드별 유휴 컴퓨팅 비용을 줄인다.
+- **H2:** 독립 구조가 일부 Noisy Neighbor 영향을 더 잘 제한한다.
+- **H3:** 공유 환경의 용량 예약과 공정성 제어는 비용과 버스트 격리 사이의 트레이드오프를 만든다.
+- **H4:** 점진적 브랜드 전환은 서비스 중단을 제한하면서 데이터 정합성을 보호할 수 있다.
 
-## Cost comparison
+위 내용은 **가설**이며 결과가 아닙니다.
 
-Distinguish **actual AWS spend for experiments** from **modeled 30-day scenario costs**. Include Fargate or EC2 compute, ALB hourly/LCU charges, RDS, SQS, logs, NAT/endpoints, data transfer and any other deployed charge. Evaluate equal tenant count, equivalent redundancy and clear workload distributions. The crossover point is unknown until estimated from evidence.
+## 비용 비교 방법
 
-| Scenario | Architecture | A p95 | B p95 | C p95 | Error % | Task count | Order delay | AWS cost |
+**실험 중 실제 AWS 청구액**과 **30일 운영을 가정한 모델링 비용**을 구분합니다. Fargate/EC2 컴퓨팅, ALB 시간·LCU, RDS, SQS, 로그, NAT 또는 VPC Endpoint, 데이터 전송 등 실제 배포된 항목을 포함합니다. 브랜드 수, 가용성 요구, 트래픽 분포를 명확히 동일 조건으로 설정합니다. 손익분기점은 측정·산정 후에만 결론 내립니다.
+
+| 시나리오 | 구조 | A p95 | B p95 | C p95 | 오류율 | Task 수 | 주문 처리 지연 | AWS 비용 |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| Idle | Dedicated | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| Idle | Shared | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| A burst | Dedicated | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| A burst | Shared | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
+| 유휴 | 독립 | 미측정 | 미측정 | 미측정 | 미측정 | 미측정 | 미측정 | 미산정 |
+| 유휴 | 공유 | 미측정 | 미측정 | 미측정 | 미측정 | 미측정 | 미측정 | 미산정 |
+| A 폭증 | 독립 | 미측정 | 미측정 | 미측정 | 미측정 | 미측정 | 미측정 | 미산정 |
+| A 폭증 | 공유 | 미측정 | 미측정 | 미측정 | 미측정 | 미측정 | 미측정 | 미산정 |
 
-## Evidence requirements
+## 증거 자료
 
-Record the k6/test scenarios, raw JSON or CSV output, metric snapshots, Terraform configuration, pricing assumptions and conclusion limitations. Do not borrow OrderServ's reported savings or scale-up improvements as our results.
+k6 테스트 코드, 원시 JSON/CSV, 메트릭 캡처, Terraform 설정, 요금 가정, 결론의 한계를 보관합니다. OrderServ 공식 절감률과 Scale-out 개선값을 우리 프로젝트의 성과로 사용하지 않습니다.
