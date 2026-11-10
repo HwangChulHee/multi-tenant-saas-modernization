@@ -1,0 +1,26 @@
+server:
+  port: ${SERVER_PORT}
+
+logging:
+  structured:
+    format:
+      console: ecs
+
+management:
+  endpoints:
+    access:
+      default: none
+  endpoint:
+    health:
+      access: read-only
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: livenessState
+          additional-path: server:/health
+        readiness:
+          additional-path: server:/ready
+
+app:
+  active-brands: ${ACTIVE_BRANDS}

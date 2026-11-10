@@ -1,0 +1,3 @@
+rootProject.name = 'multi-tenant-saas'
+
+include 'common', 'catalog-api', 'order-api', 'fulfillment-worker', 'mock-pos'

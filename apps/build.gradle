@@ -1,0 +1,39 @@
+plugins {
+    id 'org.springframework.boot' version '3.5.16' apply false
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+configure([project(':catalog-api'), project(':order-api'), project(':fulfillment-worker'), project(':mock-pos')]) {
+    apply plugin: 'org.springframework.boot'
+
+    dependencies {
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        implementation project(':common')
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    }
+
+    tasks.named('bootJar') {
+        archiveFileName = 'app.jar'
+    }
+}
+
+configure([project(':catalog-api'), project(':order-api'), project(':fulfillment-worker')]) {
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+        runtimeOnly 'org.postgresql:postgresql'
+    }
+}

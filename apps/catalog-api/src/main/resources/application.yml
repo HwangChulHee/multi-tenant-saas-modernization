@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: catalog-api
+  config:
+    import: classpath:service-defaults.yml
+
+management:
+  endpoint:
+    health:
+      group:
+        readiness:
+          include: readinessState,db

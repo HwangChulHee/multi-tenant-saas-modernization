@@ -1,0 +1,114 @@
+name: multi-tenant-saas
+
+x-app: &app
+  healthcheck:
+    test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:$$SERVER_PORT/ready"]
+    interval: 5s
+    timeout: 3s
+    retries: 12
+    start_period: 15s
+
+x-db-env: &db-env
+  SPRING_DATASOURCE_URL: ${DB_URL:?set DB_URL}
+  SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:?set POSTGRES_USER}
+  SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+
+x-sqs-env: &sqs-env
+  SQS_ENDPOINT: ${SQS_ENDPOINT:?set SQS_ENDPOINT}
+  AWS_REGION: ${AWS_REGION:?set AWS_REGION}
+
+services:
+  postgres:
+    image: postgres:17.6-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  localstack:
+    image: localstack/localstack:4.12.0
+    environment:
+      SERVICES: sqs
+      AWS_DEFAULT_REGION: ${AWS_REGION:?set AWS_REGION}
+      LOCALSTACK_HOST: localstack:4566
+      SQS_ENDPOINT_STRATEGY: path
+    healthcheck:
+      test: ["CMD-SHELL", "awslocal sqs list-queues >/dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+
+  catalog-api:
+    <<: *app
+    build:
+      context: .
+      args:
+        SERVICE: catalog-api
+    environment:
+      <<: *db-env
+      ACTIVE_BRANDS: ${ACTIVE_BRANDS:?set ACTIVE_BRANDS}
+      SERVER_PORT: ${CATALOG_PORT:?set CATALOG_PORT}
+    ports:
+      - "127.0.0.1:${CATALOG_PORT}:${CATALOG_PORT}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  order-api:
+    <<: *app
+    build:
+      context: .
+      args:
+        SERVICE: order-api
+    environment:
+      <<: [*db-env, *sqs-env]
+      ACTIVE_BRANDS: ${ACTIVE_BRANDS:?set ACTIVE_BRANDS}
+      SERVER_PORT: ${ORDER_PORT:?set ORDER_PORT}
+    ports:
+      - "127.0.0.1:${ORDER_PORT}:${ORDER_PORT}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+
+  fulfillment-worker:
+    <<: *app
+    build:
+      context: .
+      args:
+        SERVICE: fulfillment-worker
+    environment:
+      <<: [*db-env, *sqs-env]
+      ACTIVE_BRANDS: ${ACTIVE_BRANDS:?set ACTIVE_BRANDS}
+      SERVER_PORT: ${WORKER_PORT:?set WORKER_PORT}
+    ports:
+      - "127.0.0.1:${WORKER_PORT}:${WORKER_PORT}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+
+  mock-pos:
+    <<: *app
+    build:
+      context: .
+      args:
+        SERVICE: mock-pos
+    environment:
+      ACTIVE_BRANDS: ${ACTIVE_BRANDS:?set ACTIVE_BRANDS}
+      SERVER_PORT: ${MOCK_POS_PORT:?set MOCK_POS_PORT}
+    ports:
+      - "127.0.0.1:${MOCK_POS_PORT}:${MOCK_POS_PORT}"
+
+volumes:
+  postgres-data:

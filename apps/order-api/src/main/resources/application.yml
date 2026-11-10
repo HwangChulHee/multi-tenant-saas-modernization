@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: order-api
+  config:
+    import: classpath:service-defaults.yml
+
+management:
+  endpoint:
+    health:
+      group:
+        readiness:
+          include: readinessState,db
+
+app:
+  sqs:
+    endpoint: ${SQS_ENDPOINT:}
+    region: ${AWS_REGION}
