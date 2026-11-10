@@ -1,30 +1,30 @@
-# 05. Progressive tenant migration runbook
+# 05. 테넌트별 단계적 마이그레이션 Runbook
 
-**Status:** Proposed; times, interruption and reconciliation behavior require live validation.
+**상태:** 실행 전 계획. 중단 시간과 데이터 조정 절차는 실제 실험으로 검증해야 합니다.
 
-## Non-negotiable invariants
+## 반드시 지켜야 할 조건
 
-- At most **one authoritative write path** per tenant.
-- Idempotency keys protect order creation and downstream fulfillment.
-- No missing orders, no mixed-tenant records, no silently lost queue work.
-- Routing rollback after the target starts accepting writes is **not automatically safe**.
+- 테넌트마다 **권위 있는 주문 쓰기 경로는 한 곳**만 존재.
+- 주문 생성과 매장 전달에는 멱등성 키 적용.
+- 주문 누락·타 테넌트 데이터 혼합·Queue 작업의 조용한 유실 금지.
+- Target에서 쓰기가 시작된 후에는 라우팅만 Source로 되돌리는 **즉시 롤백이 안전하지 않을 수 있음**.
 
-## Proposed wave: Brand A
+## 브랜드 A 전환 절차
 
-0. **Prechecks:** record baseline metrics, tenant ownership, deployment versions, DB backups, queue status, SLO/rollback thresholds.
-1. **Read-only validation:** deploy shared services; shadow or canary *reads* only; avoid cross-tenant cache collisions.
-2. **Seed target data:** copy Brand A records, compare counts/keys/checksums. If continuing source writes, define CDC or a short stopped-writes reconciliation phase.
-3. **Quiesce:** temporarily stop Brand A order writes; drain or pause A workers; verify SQS messages and in-flight work.
-4. **Reconcile:** verify final tenant data and outstanding fulfillment jobs. Guarantee a single active consumer/writer per tenant.
-5. **Cut over:** move Brand A routing to shared API, enable shared writes/worker, watch p95, 5xx, authorized traffic, order counts and SQS delays.
-6. **Evaluate:** allow Brand B/C to remain dedicated; record change timeline and go/no-go result.
+0. **사전 점검:** 기준 메트릭, 브랜드별 데이터 소유권, 배포 버전, DB 백업, Queue 상태, SLO 및 롤백 임계값 기록.
+1. **읽기 검증:** 공유 서비스 배포. 읽기 요청만 Shadow 또는 Canary로 검증하고 테넌트 간 캐시 충돌 방지.
+2. **초기 데이터 이관:** 브랜드 A의 데이터 복사 후 건수·키·체크섬 비교. Source 쓰기가 계속된다면 CDC 또는 짧은 쓰기 중지 후 최종 정합 절차를 명시.
+3. **작업 정지:** 브랜드 A 주문 쓰기를 잠시 중단. 기존 A Worker를 일시 중지하거나 Drain하고 진행 중인 SQS 작업 점검.
+4. **정합성 검증:** 최종 데이터와 남은 주문 처리 이벤트를 대조. 브랜드 A를 소비·기록하는 주체가 중복 실행되지 않도록 확인.
+5. **전환:** 브랜드 A 라우팅을 공유 API로 변경하고 공유 경로에서 쓰기/Worker 활성화. p95, 5xx, 인가 실패, 주문 건수, SQS 지연 감시.
+6. **평가:** 브랜드 B/C는 기존 환경 유지. 타임라인, 변경 결과, Go/No-Go 판단 기록.
 
-## Rollback boundaries
+## 롤백 가능 경계
 
-- **Before target writes:** revert routing and restart old path after ensuring Source remains authoritative.
-- **After target writes:** reverse replication, event replay or explicit lossless reconciliation is required. If unavailable, halt writes and **forward-fix** instead of claiming an instant DNS rollback.
-- **Tenant data leak or security failure:** stop affected route, collect audit evidence and follow incident response procedure.
+- **Target 쓰기 시작 전:** Source가 여전히 유일한 진실 공급원이 맞는지 확인하고 라우팅을 복구한 뒤 기존 경로 재개.
+- **Target 쓰기 시작 후:** 역방향 복제, 이벤트 재생, 또는 손실 없는 재정합이 선행되어야 함. 준비되지 않았다면 쓰기를 중지하고 **Forward-fix(신규 환경 수리)**를 우선하며 DNS만 되돌리는 행위를 롤백이라고 부르지 않음.
+- **보안 격리 실패:** 해당 브랜드 라우팅 차단, 감사 증거 수집, 사고 대응 절차 실행.
 
-## Migration evidence
+## 남길 증거
 
-Customer change plan, approval/go-no-go checklist, timestamped actions, tenant order inventory, in-flight queue reconciliation, error/latency charts, security negative tests, rollback decision log and post-change verification.
+고객 변경 계획서, 승인·Go/No-Go 체크리스트, 타임스탬프별 작업 기록, 주문 대조 결과, 진행 중 Queue 작업 처리 내역, 오류율·지연 그래프, 보안 부정 테스트, 롤백 판단 근거, 전환 후 점검 결과.
