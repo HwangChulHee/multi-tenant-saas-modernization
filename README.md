@@ -58,6 +58,7 @@
 - [06. 11월 로드맵](docs/06-roadmap.md)
 - [07. 참고 자료](docs/07-references.md)
 - [08. 필수 관측 계층 설계](docs/08-observability.md)
+- [09. 구현 상세 설계 v1](docs/09-detailed-design.md)
 
 ## 디렉터리
 
