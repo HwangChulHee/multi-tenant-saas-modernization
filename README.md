@@ -35,10 +35,14 @@
 
 **목표 컴퓨팅 결정:** 기존은 브랜드별 ECS Fargate, 전환 후는 **공유 ECS on EC2 + Auto Scaling Group(ASG)**. 트래픽 증가 시 ECS Task 수를 늘리고 EC2 배치 용량이 모자라면 Capacity Provider가 ASG 증설을 유도하도록 설계한다. ASG가 트래픽을 직접 해석해 Task를 늘리는 것은 아니다. EC2 Warm Pool·Bottlerocket은 별도 고도화 과제로 남긴다.
 
+## 관측 계층 — 필수 구현
+
+기존 Fargate 및 목표 ECS on EC2 환경 모두에 동일한 관측 기준을 적용합니다. **OpenTelemetry 기반 분산 추적(Trace) + 브랜드별 애플리케이션 메트릭 + 구조화 로그 + CloudWatch 인프라 메트릭**을 수집하며, 대시보드·알림·장애 원인 분석까지 검증합니다. 관측은 선택적 장식이 아니라 비용·확장성·보안·전환 결과를 해석하기 위한 필수 전제입니다. [상세 설계](docs/08-observability.md)
+
 ## 4대 검증 영역
 
 1. **비용:** 동일한 가용성 및 SLO 조건에서 리소스 사용량과 월간 예상 비용 비교.
-2. **확장성:** 유휴·정상·프로모션 폭증·전체 브랜드 동시 부하에서 브랜드별 지연과 오류율 측정. Noisy Neighbor 확인.
+2. **확장성:** 유휴·정상·프로모션 폭증·전체 브랜드 동시 부하에서 브랜드별 지연과 오류율을 메트릭·로그·Trace로 분석. Noisy Neighbor 원인 확인.
 3. **보안:** 브랜드 간 API/DB 접근 차단, 신뢰 가능한 테넌트 식별, 최소 권한 검증.
 4. **운영 중 전환:** 브랜드 A를 운영 부하 상태에서 전환하며 주문 수·SQS 처리 결과를 검증하고 제한 조건이 명확한 롤백 절차 실험.
 
@@ -53,6 +57,7 @@
 - [05. 단계별 마이그레이션 Runbook](docs/05-migration-runbook.md)
 - [06. 11월 로드맵](docs/06-roadmap.md)
 - [07. 참고 자료](docs/07-references.md)
+- [08. 필수 관측 계층 설계](docs/08-observability.md)
 
 ## 디렉터리
 
