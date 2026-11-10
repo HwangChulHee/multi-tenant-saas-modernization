@@ -35,14 +35,14 @@
 
 **목표 컴퓨팅 결정:** 기존은 브랜드별 ECS Fargate, 전환 후는 **공유 ECS on EC2 + Auto Scaling Group(ASG)**. 트래픽 증가 시 ECS Task 수를 늘리고 EC2 배치 용량이 모자라면 Capacity Provider가 ASG 증설을 유도하도록 설계한다. ASG가 트래픽을 직접 해석해 Task를 늘리는 것은 아니다. EC2 Warm Pool·Bottlerocket은 별도 고도화 과제로 남긴다.
 
-## 관측 계층 — 필수 구현
+## 관측 계층 — 후반 구축 (도구 미확정)
 
-기존 Fargate 및 목표 ECS on EC2 환경 모두에 동일한 관측 기준을 적용합니다. **OpenTelemetry 기반 분산 추적(Trace) + 브랜드별 애플리케이션 메트릭 + 구조화 로그 + CloudWatch 인프라 메트릭**을 수집하며, 대시보드·알림·장애 원인 분석까지 검증합니다. 관측은 선택적 장식이 아니라 비용·확장성·보안·전환 결과를 해석하기 위한 필수 전제입니다. [상세 설계](docs/08-observability.md)
+**관측 기능은 프로젝트 범위에 유지하지만 도구 선택·본격 구축은 마이그레이션 이후(6단계)로 연기합니다.** 초기에는 Spring Boot JSON 로그(`request_id`, 인증된 `tenant_id`, 처리 시간), k6 원시 결과, AWS 기본 CloudWatch 메트릭만 수집합니다. 최종 비교 실험 전에는 Source/Target을 동일한 관측 조건으로 재측정합니다. OpenTelemetry·X-Ray·Prometheus·Grafana 등은 지금 확정하지 않습니다. [단계별 로드맵](docs/06-roadmap.md) · [관측 요구사항](docs/08-observability.md)
 
 ## 4대 검증 영역
 
 1. **비용:** 동일한 가용성 및 SLO 조건에서 리소스 사용량과 월간 예상 비용 비교.
-2. **확장성:** 유휴·정상·프로모션 폭증·전체 브랜드 동시 부하에서 브랜드별 지연과 오류율을 메트릭·로그·Trace로 분석. Noisy Neighbor 원인 확인.
+2. **확장성:** 초기에는 k6·기본 CloudWatch 지표로 유휴·정상·프로모션 폭증 부하의 지연·오류를 측정하고, 관측 고도화 후 동일 조건으로 재측정하여 Noisy Neighbor의 원인을 분석.
 3. **보안:** 브랜드 간 API/DB 접근 차단, 신뢰 가능한 테넌트 식별, 최소 권한 검증.
 4. **운영 중 전환:** 브랜드 A를 운영 부하 상태에서 전환하며 주문 수·SQS 처리 결과를 검증하고 제한 조건이 명확한 롤백 절차 실험.
 
