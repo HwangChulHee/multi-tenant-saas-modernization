@@ -1,28 +1,28 @@
-# 06. November 2026 implementation roadmap
+# 06. 2026년 11월 구현 로드맵
 
-**Status:** Planned milestones; not evidence of completion.
+**상태:** 목표 일정. 완료를 의미하지 않습니다.
 
-| Dates (KST) | Milestone | Exit criteria |
+| 기간 (KST) | 목표 | 완료 판정 기준 |
 |---|---|---|
-| Nov 10–13 | Minimal order domain and dedicated baseline | Working Catalog/Order/Worker, tenant fixtures, deploy instructions |
-| Nov 14–17 | Pooled ECS + tenant security | Shared deployment, authentication, persistence isolation, denied-access tests |
-| Nov 18–21 | Scaling and cost experiments | Repeated comparable tests, raw per-tenant metrics, assumptions |
-| Nov 22–24 | Brand A live cutover and failure drill | One verified migration wave, bounded rollback, runbook |
-| Nov 25–27 | MSP-style report and job application | Architecture ADRs, final benchmark/security/cutover report |
+| 11/10~11/13 | 최소 주문 도메인과 독립 배포 기준선 | Catalog/Order/Worker, 테스트 테넌트, 배포 방법 |
+| 11/14~11/17 | 공유 ECS 및 테넌트 보안 | 공유 배포, 인증, 데이터 격리, 접근 거부 테스트 |
+| 11/18~11/21 | 확장성 및 비용 실험 | 비교 가능한 반복 실험, 브랜드별 원시 결과와 비용 가정 |
+| 11/22~11/24 | 브랜드 A 운영 중 전환·장애 연습 | 전환 1회, 정합성 검증, 롤백 조건·Runbook |
+| 11/25~11/27 | MSP형 보고서 및 지원 | ADR, 성능·보안·전환 보고서, 채용 지원 |
 
-## Priority and scope freeze
+## 우선순위 및 범위 통제
 
-**P0:** dedicated and pooled deployments, functional parity, tenant boundaries, repeatable benchmark.
+- **P0:** 독립/공유 배포, 기능 동일성, 테넌트 보안 경계, 재현 가능한 벤치마크.
+- **P1:** 브랜드 A Cutover, 부정 보안 테스트, 장애 실험 1건, 실제 롤백 또는 안전한 Forward-fix 절차 검증.
+- **P2:** FireLens, X-Ray, Bottlerocket, EC2 Warm Pool, 테넌트별 세분화 IAM Role, 고도화 CI/CD, 전체 브랜드 이전.
 
-**P1:** Brand A cutover, a negative security test suite, one operational incident, rollback or safe forward-fix analysis.
+선택 사항은 실제로 배포·검증하지 않았다면 완료 아키텍처에 표시하지 않습니다.
 
-**P2:** FireLens, X-Ray, Bottlerocket, EC2 warm pools, dedicated AWS roles per tenant, rich CI/CD, all-brand migration. Do not put optional services on the finished architecture diagram unless deployed and verified.
+## 최종 완료 기준
 
-## Definition of done
-
-- Another engineer can follow prerequisites and reproduce both environments.
-- Security denied tests pass at API and data layer.
-- Results include measured numbers, raw data and cost assumptions.
-- One brand migration has timestamps and evidence of order integrity.
-- A customer-oriented change report and cleanup instructions exist.
-- AWS budget alerts and explicit `terraform destroy` / teardown are documented.
+- 다른 개발자가 문서를 따라 두 환경을 재현할 수 있을 것.
+- API와 데이터 계층에서 교차 테넌트 접근 차단 검증을 통과할 것.
+- 실측 수치, 원시 결과, 비용 산정 가정을 남길 것.
+- 최소 한 브랜드의 전환 과정과 주문 정합성 증거를 남길 것.
+- 고객용 변경 보고서와 리소스 정리 절차를 작성할 것.
+- AWS 예산 경보 및 `terraform destroy` 등 정리 절차를 명시할 것.
