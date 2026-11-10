@@ -1,5 +1,15 @@
 server:
   port: ${SERVER_PORT}
+  shutdown: graceful
+
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 15s
+  task:
+    scheduling:
+      shutdown:
+        await-termination: true
+        await-termination-period: 12s
 
 logging:
   structured:

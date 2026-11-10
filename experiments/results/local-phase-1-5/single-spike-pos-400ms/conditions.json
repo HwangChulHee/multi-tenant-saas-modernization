@@ -1,0 +1,22 @@
+{
+  "scenario": "single-spike",
+  "rates_rps": {
+    "A": 10,
+    "B": 2,
+    "C": 2
+  },
+  "order_percent": {
+    "A": 35,
+    "B": 35,
+    "C": 35
+  },
+  "duration_seconds": 12,
+  "vus_per_active_brand": 4,
+  "worker_replicas": 1,
+  "pos_delay_ms": 400,
+  "sampling_target_seconds": 4.0,
+  "drain_limit_seconds": 100,
+  "load_started_at": "2026-11-10T11:04:16.190665+00:00",
+  "load_ended_at": "2026-11-10T11:04:29.363516+00:00",
+  "observation_ended_at": "2026-11-10T11:06:04.392887+00:00"
+}

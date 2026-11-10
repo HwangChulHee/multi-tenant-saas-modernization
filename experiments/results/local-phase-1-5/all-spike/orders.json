@@ -1,0 +1,752 @@
+[
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:45.468311+00",
+    "published_at": "2026-11-10 11:02:45.605303+00",
+    "processed_at": "2026-11-10 11:02:45.740777+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:45.738422+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "272.466"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:45.468334+00",
+    "published_at": "2026-11-10 11:02:45.611776+00",
+    "processed_at": "2026-11-10 11:02:45.725645+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:45.723175+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "257.311"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:45.468482+00",
+    "published_at": "2026-11-10 11:02:45.62322+00",
+    "processed_at": "2026-11-10 11:02:45.707819+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:45.705276+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "239.337"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:46.034181+00",
+    "published_at": "2026-11-10 11:02:46.204736+00",
+    "processed_at": "2026-11-10 11:02:46.235826+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:46.233495+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "201.645"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:46.034181+00",
+    "published_at": "2026-11-10 11:02:46.196183+00",
+    "processed_at": "2026-11-10 11:02:46.249638+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:46.247426+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "215.457"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:46.034191+00",
+    "published_at": "2026-11-10 11:02:46.212468+00",
+    "processed_at": "2026-11-10 11:02:46.21939+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:46.216785+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "185.199"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:46.534682+00",
+    "published_at": "2026-11-10 11:02:46.719885+00",
+    "processed_at": "2026-11-10 11:02:46.771215+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:46.768741+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "236.533"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:46.534682+00",
+    "published_at": "2026-11-10 11:02:46.734251+00",
+    "processed_at": "2026-11-10 11:02:46.740296+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:46.737986+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "205.614"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:46.534687+00",
+    "published_at": "2026-11-10 11:02:46.727053+00",
+    "processed_at": "2026-11-10 11:02:46.754824+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:46.75236+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "220.137"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:47.036334+00",
+    "published_at": "2026-11-10 11:02:47.247499+00",
+    "processed_at": "2026-11-10 11:02:47.276033+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:47.272638+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "239.699"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:47.03635+00",
+    "published_at": "2026-11-10 11:02:47.241167+00",
+    "processed_at": "2026-11-10 11:02:47.290955+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:47.28809+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "254.605"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:47.036355+00",
+    "published_at": "2026-11-10 11:02:47.254344+00",
+    "processed_at": "2026-11-10 11:02:47.260108+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:47.257979+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "223.753"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:47.372011+00",
+    "published_at": "2026-11-10 11:02:47.785573+00",
+    "processed_at": "2026-11-10 11:02:47.791258+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:47.78933+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "419.247"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:47.372019+00",
+    "published_at": "2026-11-10 11:02:47.779328+00",
+    "processed_at": "2026-11-10 11:02:47.805045+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:47.802762+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "433.026"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:47.372049+00",
+    "published_at": "2026-11-10 11:02:47.770802+00",
+    "processed_at": "2026-11-10 11:02:47.820916+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:47.818751+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "448.867"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:47.871872+00",
+    "published_at": "2026-11-10 11:02:48.317361+00",
+    "processed_at": "2026-11-10 11:02:48.323422+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:48.321459+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "451.550"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:47.871959+00",
+    "published_at": "2026-11-10 11:02:48.300355+00",
+    "processed_at": "2026-11-10 11:02:48.35468+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:48.352351+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "482.721"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:47.871961+00",
+    "published_at": "2026-11-10 11:02:48.309191+00",
+    "processed_at": "2026-11-10 11:02:48.339691+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:48.337299+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "467.730"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:48.367156+00",
+    "published_at": "2026-11-10 11:02:48.825654+00",
+    "processed_at": "2026-11-10 11:02:48.872739+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:48.869751+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "505.583"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:48.367342+00",
+    "published_at": "2026-11-10 11:02:48.831211+00",
+    "processed_at": "2026-11-10 11:02:48.856595+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:48.8545+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "489.253"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:48.367361+00",
+    "published_at": "2026-11-10 11:02:48.837925+00",
+    "processed_at": "2026-11-10 11:02:48.843304+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:48.841318+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "475.943"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:48.705427+00",
+    "published_at": "2026-11-10 11:02:49.350248+00",
+    "processed_at": "2026-11-10 11:02:49.383213+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:49.38061+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "677.786"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:48.705429+00",
+    "published_at": "2026-11-10 11:02:49.357573+00",
+    "processed_at": "2026-11-10 11:02:49.366179+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:49.362053+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "660.750"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:48.706473+00",
+    "published_at": "2026-11-10 11:02:49.344503+00",
+    "processed_at": "2026-11-10 11:02:49.397626+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:49.39499+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "691.153"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:49.200272+00",
+    "published_at": "2026-11-10 11:02:49.880626+00",
+    "processed_at": "2026-11-10 11:02:49.88651+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:49.88432+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "686.238"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:49.200315+00",
+    "published_at": "2026-11-10 11:02:49.865721+00",
+    "processed_at": "2026-11-10 11:02:49.913419+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:49.911305+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "713.104"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:49.200321+00",
+    "published_at": "2026-11-10 11:02:49.874523+00",
+    "processed_at": "2026-11-10 11:02:49.900321+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:49.898151+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "700.000"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:49.700578+00",
+    "published_at": "2026-11-10 11:02:50.396913+00",
+    "processed_at": "2026-11-10 11:02:50.430119+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:50.427419+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "729.541"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:49.700656+00",
+    "published_at": "2026-11-10 11:02:50.404626+00",
+    "processed_at": "2026-11-10 11:02:50.411642+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:50.408884+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "710.986"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:49.700768+00",
+    "published_at": "2026-11-10 11:02:50.388926+00",
+    "processed_at": "2026-11-10 11:02:50.447618+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:50.445026+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "746.850"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:50.533525+00",
+    "published_at": "2026-11-10 11:02:50.91874+00",
+    "processed_at": "2026-11-10 11:02:50.94641+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:50.944327+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "412.885"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:50.533535+00",
+    "published_at": "2026-11-10 11:02:50.911955+00",
+    "processed_at": "2026-11-10 11:02:50.959029+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:50.957166+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "425.494"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:50.533781+00",
+    "published_at": "2026-11-10 11:02:50.925967+00",
+    "processed_at": "2026-11-10 11:02:50.93192+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:50.92964+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "398.139"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:51.040037+00",
+    "published_at": "2026-11-10 11:02:51.448693+00",
+    "processed_at": "2026-11-10 11:02:51.476028+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:51.473833+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "435.991"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:51.040124+00",
+    "published_at": "2026-11-10 11:02:51.440951+00",
+    "processed_at": "2026-11-10 11:02:51.489395+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:51.487464+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "449.271"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:51.040356+00",
+    "published_at": "2026-11-10 11:02:51.455294+00",
+    "processed_at": "2026-11-10 11:02:51.460992+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:51.458966+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "420.636"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:51.53649+00",
+    "published_at": "2026-11-10 11:02:51.974049+00",
+    "processed_at": "2026-11-10 11:02:51.980635+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:51.977574+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "444.145"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:51.536563+00",
+    "published_at": "2026-11-10 11:02:51.961727+00",
+    "processed_at": "2026-11-10 11:02:52.016085+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:52.013411+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "479.522"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:51.536567+00",
+    "published_at": "2026-11-10 11:02:51.967459+00",
+    "processed_at": "2026-11-10 11:02:51.999249+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:51.996547+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "462.682"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:51.867749+00",
+    "published_at": "2026-11-10 11:02:52.502086+00",
+    "processed_at": "2026-11-10 11:02:52.540765+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:52.538021+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "673.016"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:51.867749+00",
+    "published_at": "2026-11-10 11:02:52.509206+00",
+    "processed_at": "2026-11-10 11:02:52.520999+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:52.516714+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "653.250"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:51.867749+00",
+    "published_at": "2026-11-10 11:02:52.494642+00",
+    "processed_at": "2026-11-10 11:02:52.555507+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:52.553141+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "687.758"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:52.367049+00",
+    "published_at": "2026-11-10 11:02:53.024493+00",
+    "processed_at": "2026-11-10 11:02:53.074727+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:53.07288+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "707.678"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:52.367126+00",
+    "published_at": "2026-11-10 11:02:53.031927+00",
+    "processed_at": "2026-11-10 11:02:53.061764+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:53.05986+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "694.638"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:52.367228+00",
+    "published_at": "2026-11-10 11:02:53.043893+00",
+    "processed_at": "2026-11-10 11:02:53.048841+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:53.046931+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "681.613"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:52.866731+00",
+    "published_at": "2026-11-10 11:02:53.557386+00",
+    "processed_at": "2026-11-10 11:02:53.588302+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:53.586033+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "721.571"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:52.866733+00",
+    "published_at": "2026-11-10 11:02:53.56426+00",
+    "processed_at": "2026-11-10 11:02:53.569951+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:53.56757+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "703.218"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:52.866741+00",
+    "published_at": "2026-11-10 11:02:53.550446+00",
+    "processed_at": "2026-11-10 11:02:53.603139+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:53.600688+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "736.398"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:53.20331+00",
+    "published_at": "2026-11-10 11:02:54.070986+00",
+    "processed_at": "2026-11-10 11:02:54.115979+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:54.114125+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "912.669"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:53.20331+00",
+    "published_at": "2026-11-10 11:02:54.084899+00",
+    "processed_at": "2026-11-10 11:02:54.090667+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:54.088331+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "887.357"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:53.203321+00",
+    "published_at": "2026-11-10 11:02:54.079532+00",
+    "processed_at": "2026-11-10 11:02:54.103679+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:54.101613+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "900.358"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:53.700625+00",
+    "published_at": "2026-11-10 11:02:54.600731+00",
+    "processed_at": "2026-11-10 11:02:54.626823+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:54.624831+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "926.198"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:53.700626+00",
+    "published_at": "2026-11-10 11:02:54.60865+00",
+    "processed_at": "2026-11-10 11:02:54.614154+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:54.612154+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "913.528"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:53.700744+00",
+    "published_at": "2026-11-10 11:02:54.591424+00",
+    "processed_at": "2026-11-10 11:02:54.644245+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:54.638457+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "943.501"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:54.203346+00",
+    "published_at": "2026-11-10 11:02:55.144177+00",
+    "processed_at": "2026-11-10 11:02:55.151408+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:55.149486+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "948.062"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:54.203359+00",
+    "published_at": "2026-11-10 11:02:55.124191+00",
+    "processed_at": "2026-11-10 11:02:55.176874+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:55.174523+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "973.515"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:54.203654+00",
+    "published_at": "2026-11-10 11:02:55.134562+00",
+    "processed_at": "2026-11-10 11:02:55.164332+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:55.162498+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "960.678"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:55.037677+00",
+    "published_at": "2026-11-10 11:02:55.657451+00",
+    "processed_at": "2026-11-10 11:02:55.682579+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:55.680356+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "644.902"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:55.037845+00",
+    "published_at": "2026-11-10 11:02:55.651237+00",
+    "processed_at": "2026-11-10 11:02:55.696742+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:55.6944+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "658.897"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:55.03826+00",
+    "published_at": "2026-11-10 11:02:55.664086+00",
+    "processed_at": "2026-11-10 11:02:55.669081+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:55.667095+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "630.821"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:55.535668+00",
+    "published_at": "2026-11-10 11:02:56.192774+00",
+    "processed_at": "2026-11-10 11:02:56.197737+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:56.195931+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "662.069"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:55.535668+00",
+    "published_at": "2026-11-10 11:02:56.185906+00",
+    "processed_at": "2026-11-10 11:02:56.211444+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:56.209543+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "675.776"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:55.535668+00",
+    "published_at": "2026-11-10 11:02:56.177346+00",
+    "processed_at": "2026-11-10 11:02:56.22386+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:56.221924+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "688.192"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:56.036418+00",
+    "published_at": "2026-11-10 11:02:56.698946+00",
+    "processed_at": "2026-11-10 11:02:56.74286+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:56.741055+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "706.442"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:56.036436+00",
+    "published_at": "2026-11-10 11:02:56.706363+00",
+    "processed_at": "2026-11-10 11:02:56.730428+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:56.728314+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "693.992"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:56.036711+00",
+    "published_at": "2026-11-10 11:02:56.712022+00",
+    "processed_at": "2026-11-10 11:02:56.717232+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:56.71518+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "680.521"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:56.369332+00",
+    "published_at": "2026-11-10 11:02:57.231689+00",
+    "processed_at": "2026-11-10 11:02:57.25737+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:57.255525+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "888.038"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:56.369351+00",
+    "published_at": "2026-11-10 11:02:57.22078+00",
+    "processed_at": "2026-11-10 11:02:57.269785+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:57.26786+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "900.434"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:56.369396+00",
+    "published_at": "2026-11-10 11:02:57.239162+00",
+    "processed_at": "2026-11-10 11:02:57.244588+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:57.24256+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "875.192"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:56.867212+00",
+    "published_at": "2026-11-10 11:02:57.767824+00",
+    "processed_at": "2026-11-10 11:02:57.77363+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:57.771502+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "906.418"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:56.867212+00",
+    "published_at": "2026-11-10 11:02:57.753202+00",
+    "processed_at": "2026-11-10 11:02:57.800595+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:57.797997+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "933.383"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:56.867241+00",
+    "published_at": "2026-11-10 11:02:57.761384+00",
+    "processed_at": "2026-11-10 11:02:57.786726+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:57.78472+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "919.485"
+  },
+  {
+    "brand": "brand_b",
+    "created_at": "2026-11-10 11:02:57.380601+00",
+    "published_at": "2026-11-10 11:02:58.280831+00",
+    "processed_at": "2026-11-10 11:02:58.313004+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:58.310779+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "932.403"
+  },
+  {
+    "brand": "brand_c",
+    "created_at": "2026-11-10 11:02:57.380621+00",
+    "published_at": "2026-11-10 11:02:58.274339+00",
+    "processed_at": "2026-11-10 11:02:58.329252+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:58.326649+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "948.631"
+  },
+  {
+    "brand": "brand_a",
+    "created_at": "2026-11-10 11:02:57.380813+00",
+    "published_at": "2026-11-10 11:02:58.289291+00",
+    "processed_at": "2026-11-10 11:02:58.297376+00",
+    "status": "FULFILLED",
+    "pos_accepted_at": "2026-11-10 11:02:58.294426+00",
+    "pos_attempts": "1",
+    "fulfillment_ms": "916.563"
+  }
+]

@@ -1,0 +1,237 @@
+{
+  "http": {
+    "brand_a": {
+      "all": {
+        "requests": 0,
+        "rps": 0.0,
+        "errors": 0,
+        "successes": 0,
+        "success_pct": null,
+        "error_pct": null,
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      },
+      "catalog": {
+        "requests": 0,
+        "rps": 0.0,
+        "errors": 0,
+        "successes": 0,
+        "success_pct": null,
+        "error_pct": null,
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      },
+      "order": {
+        "requests": 0,
+        "rps": 0.0,
+        "errors": 0,
+        "successes": 0,
+        "success_pct": null,
+        "error_pct": null,
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      }
+    },
+    "brand_b": {
+      "all": {
+        "requests": 0,
+        "rps": 0.0,
+        "errors": 0,
+        "successes": 0,
+        "success_pct": null,
+        "error_pct": null,
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      },
+      "catalog": {
+        "requests": 0,
+        "rps": 0.0,
+        "errors": 0,
+        "successes": 0,
+        "success_pct": null,
+        "error_pct": null,
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      },
+      "order": {
+        "requests": 0,
+        "rps": 0.0,
+        "errors": 0,
+        "successes": 0,
+        "success_pct": null,
+        "error_pct": null,
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      }
+    },
+    "brand_c": {
+      "all": {
+        "requests": 0,
+        "rps": 0.0,
+        "errors": 0,
+        "successes": 0,
+        "success_pct": null,
+        "error_pct": null,
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      },
+      "catalog": {
+        "requests": 0,
+        "rps": 0.0,
+        "errors": 0,
+        "successes": 0,
+        "success_pct": null,
+        "error_pct": null,
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      },
+      "order": {
+        "requests": 0,
+        "rps": 0.0,
+        "errors": 0,
+        "successes": 0,
+        "success_pct": null,
+        "error_pct": null,
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      }
+    },
+    "total": {
+      "requests": 0,
+      "rps": 0.0,
+      "errors": 0,
+      "successes": 0,
+      "success_pct": null,
+      "error_pct": null,
+      "p50_ms": null,
+      "p95_ms": null,
+      "p99_ms": null
+    },
+    "dropped_iterations": {}
+  },
+  "asynchronous": {
+    "brand_a": {
+      "orders": 0,
+      "fulfilled": 0,
+      "processed": 0,
+      "published": 0,
+      "pos_accepted": 0,
+      "completed_during_load": 0,
+      "worker_orders_per_sec": 0.0,
+      "fulfillment": {
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      },
+      "sqs_message_age": {
+        "samples": 0,
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      },
+      "sqs_receive_to_ack": {
+        "samples": 0,
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      }
+    },
+    "brand_b": {
+      "orders": 0,
+      "fulfilled": 0,
+      "processed": 0,
+      "published": 0,
+      "pos_accepted": 0,
+      "completed_during_load": 0,
+      "worker_orders_per_sec": 0.0,
+      "fulfillment": {
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      },
+      "sqs_message_age": {
+        "samples": 0,
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      },
+      "sqs_receive_to_ack": {
+        "samples": 0,
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      }
+    },
+    "brand_c": {
+      "orders": 0,
+      "fulfilled": 0,
+      "processed": 0,
+      "published": 0,
+      "pos_accepted": 0,
+      "completed_during_load": 0,
+      "worker_orders_per_sec": 0.0,
+      "fulfillment": {
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      },
+      "sqs_message_age": {
+        "samples": 0,
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      },
+      "sqs_receive_to_ack": {
+        "samples": 0,
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      }
+    }
+  },
+  "final_queues": {
+    "started_at": "2026-11-10T11:00:46.839029+00:00",
+    "elapsed_seconds": 0.337,
+    "data": {
+      "brand_a": {
+        "source": {
+          "ApproximateNumberOfMessages": 0,
+          "ApproximateNumberOfMessagesNotVisible": 0
+        },
+        "dlq": {
+          "ApproximateNumberOfMessages": 0,
+          "ApproximateNumberOfMessagesNotVisible": 0
+        }
+      },
+      "brand_b": {
+        "source": {
+          "ApproximateNumberOfMessages": 0,
+          "ApproximateNumberOfMessagesNotVisible": 0
+        },
+        "dlq": {
+          "ApproximateNumberOfMessages": 0,
+          "ApproximateNumberOfMessagesNotVisible": 0
+        }
+      },
+      "brand_c": {
+        "source": {
+          "ApproximateNumberOfMessages": 0,
+          "ApproximateNumberOfMessagesNotVisible": 0
+        },
+        "dlq": {
+          "ApproximateNumberOfMessages": 0,
+          "ApproximateNumberOfMessagesNotVisible": 0
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "cpu_model": "Intel(R) Core(TM) i5-14500",
+  "wsl_release": "5.15.167.4-microsoft-standard-WSL2",
+  "machine": "x86_64",
+  "docker_cpu": 20,
+  "docker_memory_bytes": 16647565312,
+  "docker_version": "27.5.1",
+  "docker_os": "Docker Desktop",
+  "compose": "2.32.4-desktop.1",
+  "k6_image": "grafana/k6:0.57.0",
+  "k6_image_id": "sha256:70af91f86cd8e142e0544a4edaf79835a80033f71974b92edd5ac36fd4442a7b",
+  "app_base_commit": "fa24a84e9acccd62b182227e4e2216d2062cddb2",
+  "started_at": "2026-11-10T10:59:13.055961+00:00"
+}

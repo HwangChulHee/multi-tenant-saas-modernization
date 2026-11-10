@@ -1,6 +1,7 @@
 name: multi-tenant-saas
 
 x-app: &app
+  stop_grace_period: 30s
   healthcheck:
     test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:$$SERVER_PORT/ready"]
     interval: 5s

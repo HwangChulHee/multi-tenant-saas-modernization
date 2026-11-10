@@ -1,0 +1,237 @@
+{
+  "http": {
+    "brand_a": {
+      "all": {
+        "requests": 121,
+        "rps": 10.083,
+        "errors": 0,
+        "successes": 121,
+        "success_pct": 100.0,
+        "error_pct": 0.0,
+        "p50_ms": 3.929,
+        "p95_ms": 10.443,
+        "p99_ms": 13.889
+      },
+      "catalog": {
+        "requests": 78,
+        "rps": 6.5,
+        "errors": 0,
+        "successes": 78,
+        "success_pct": 100.0,
+        "error_pct": 0.0,
+        "p50_ms": 2.497,
+        "p95_ms": 7.203,
+        "p99_ms": 8.559
+      },
+      "order": {
+        "requests": 43,
+        "rps": 3.583,
+        "errors": 0,
+        "successes": 43,
+        "success_pct": 100.0,
+        "error_pct": 0.0,
+        "p50_ms": 6.028,
+        "p95_ms": 13.786,
+        "p99_ms": 20.248
+      }
+    },
+    "brand_b": {
+      "all": {
+        "requests": 25,
+        "rps": 2.083,
+        "errors": 0,
+        "successes": 25,
+        "success_pct": 100.0,
+        "error_pct": 0.0,
+        "p50_ms": 3.96,
+        "p95_ms": 9.773,
+        "p99_ms": 10.135
+      },
+      "catalog": {
+        "requests": 16,
+        "rps": 1.333,
+        "errors": 0,
+        "successes": 16,
+        "success_pct": 100.0,
+        "error_pct": 0.0,
+        "p50_ms": 2.352,
+        "p95_ms": 7.808,
+        "p99_ms": 7.808
+      },
+      "order": {
+        "requests": 9,
+        "rps": 0.75,
+        "errors": 0,
+        "successes": 9,
+        "success_pct": 100.0,
+        "error_pct": 0.0,
+        "p50_ms": 5.647,
+        "p95_ms": 10.135,
+        "p99_ms": 10.135
+      }
+    },
+    "brand_c": {
+      "all": {
+        "requests": 25,
+        "rps": 2.083,
+        "errors": 0,
+        "successes": 25,
+        "success_pct": 100.0,
+        "error_pct": 0.0,
+        "p50_ms": 3.958,
+        "p95_ms": 9.556,
+        "p99_ms": 10.533
+      },
+      "catalog": {
+        "requests": 16,
+        "rps": 1.333,
+        "errors": 0,
+        "successes": 16,
+        "success_pct": 100.0,
+        "error_pct": 0.0,
+        "p50_ms": 2.373,
+        "p95_ms": 7.349,
+        "p99_ms": 7.349
+      },
+      "order": {
+        "requests": 9,
+        "rps": 0.75,
+        "errors": 0,
+        "successes": 9,
+        "success_pct": 100.0,
+        "error_pct": 0.0,
+        "p50_ms": 6.054,
+        "p95_ms": 10.533,
+        "p99_ms": 10.533
+      }
+    },
+    "total": {
+      "requests": 171,
+      "rps": 14.25,
+      "errors": 0,
+      "successes": 171,
+      "success_pct": 100.0,
+      "error_pct": 0.0,
+      "p50_ms": 3.958,
+      "p95_ms": 10.315,
+      "p99_ms": 13.889
+    },
+    "dropped_iterations": {}
+  },
+  "asynchronous": {
+    "brand_a": {
+      "orders": 43,
+      "fulfilled": 43,
+      "processed": 43,
+      "published": 43,
+      "pos_accepted": 43,
+      "completed_during_load": 8,
+      "worker_orders_per_sec": 0.607,
+      "fulfillment": {
+        "p50_ms": 42737.93,
+        "p95_ms": 88853.289,
+        "p99_ms": 93743.704
+      },
+      "sqs_message_age": {
+        "samples": 43,
+        "p50_ms": 37466,
+        "p95_ms": 78997,
+        "p99_ms": 83361
+      },
+      "sqs_receive_to_ack": {
+        "samples": 43,
+        "p50_ms": 417,
+        "p95_ms": 423,
+        "p99_ms": 428
+      }
+    },
+    "brand_b": {
+      "orders": 9,
+      "fulfilled": 9,
+      "processed": 9,
+      "published": 9,
+      "pos_accepted": 9,
+      "completed_during_load": 8,
+      "worker_orders_per_sec": 0.607,
+      "fulfillment": {
+        "p50_ms": 2012.349,
+        "p95_ms": 2591.634,
+        "p99_ms": 2591.634
+      },
+      "sqs_message_age": {
+        "samples": 9,
+        "p50_ms": 1098,
+        "p95_ms": 2050,
+        "p99_ms": 2050
+      },
+      "sqs_receive_to_ack": {
+        "samples": 9,
+        "p50_ms": 417,
+        "p95_ms": 423,
+        "p99_ms": 423
+      }
+    },
+    "brand_c": {
+      "orders": 9,
+      "fulfilled": 9,
+      "processed": 9,
+      "published": 9,
+      "pos_accepted": 9,
+      "completed_during_load": 8,
+      "worker_orders_per_sec": 0.607,
+      "fulfillment": {
+        "p50_ms": 1592.749,
+        "p95_ms": 2168.163,
+        "p99_ms": 2168.163
+      },
+      "sqs_message_age": {
+        "samples": 9,
+        "p50_ms": 686,
+        "p95_ms": 1631,
+        "p99_ms": 1631
+      },
+      "sqs_receive_to_ack": {
+        "samples": 9,
+        "p50_ms": 419,
+        "p95_ms": 542,
+        "p99_ms": 542
+      }
+    }
+  },
+  "final_queues": {
+    "started_at": "2026-11-10T11:06:04.571713+00:00",
+    "elapsed_seconds": 0.297,
+    "data": {
+      "brand_a": {
+        "source": {
+          "ApproximateNumberOfMessages": 0,
+          "ApproximateNumberOfMessagesNotVisible": 0
+        },
+        "dlq": {
+          "ApproximateNumberOfMessages": 0,
+          "ApproximateNumberOfMessagesNotVisible": 0
+        }
+      },
+      "brand_b": {
+        "source": {
+          "ApproximateNumberOfMessages": 0,
+          "ApproximateNumberOfMessagesNotVisible": 0
+        },
+        "dlq": {
+          "ApproximateNumberOfMessages": 0,
+          "ApproximateNumberOfMessagesNotVisible": 0
+        }
+      },
+      "brand_c": {
+        "source": {
+          "ApproximateNumberOfMessages": 0,
+          "ApproximateNumberOfMessagesNotVisible": 0
+        },
+        "dlq": {
+          "ApproximateNumberOfMessages": 0,
+          "ApproximateNumberOfMessagesNotVisible": 0
+        }
+      }
+    }
+  }
+}

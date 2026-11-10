@@ -48,10 +48,16 @@ class SecurityAndConcurrencyTests(unittest.TestCase):
     def test_source_image_enables_only_one_brand(self):
         with sidecar("catalog-api", "-e", "ACTIVE_BRANDS=brand_a", "-e", "DB_BRAND_B_PASSWORD=",
                      "-e", "DB_BRAND_C_PASSWORD=", "-p", f"127.0.0.1::{CATALOG}") as container:
-            address = subprocess.check_output(["docker", "port", container, f"{CATALOG}/tcp"], text=True)
-            port = int(address.strip().rsplit(":", 1)[1])
+            port = None
 
             def ready():
+                nonlocal port
+                published = subprocess.run(["docker", "port", container, f"{CATALOG}/tcp"],
+                                           capture_output=True, text=True)
+                _, _, port_text = published.stdout.strip().rpartition(":")
+                if published.returncode != 0 or not port_text.isdecimal():
+                    return False
+                port = int(port_text)
                 try:
                     return request(port, "/ready")[0] == 200
                 except OSError:

@@ -1,0 +1,71 @@
+{
+  "checked_at": "2026-11-10T11:08:46.429563+00:00",
+  "images": {
+    "catalog-api": {
+      "image_id": "sha256:5320fdb51d9f847c280187ceabe662381a3d1c8c3efb4c88a79398816678d25f",
+      "configured_user": "10001:10001",
+      "secrets_found": false,
+      "image_health": "healthy",
+      "health_endpoint": 200,
+      "runtime_uid": 10001,
+      "server_port": 18191,
+      "sigterm": {
+        "exit_code": 143,
+        "stop_seconds": 0.675,
+        "graceful_log": true
+      }
+    },
+    "order-api": {
+      "image_id": "sha256:6330a4d5dfd0cf7bfbf2d6db2a779ce120e65c544e7c41a7927eb4052370ab90",
+      "configured_user": "10001:10001",
+      "secrets_found": false,
+      "image_health": "healthy",
+      "health_endpoint": 200,
+      "runtime_uid": 10001,
+      "server_port": 18192,
+      "sigterm": {
+        "exit_code": 143,
+        "stop_seconds": 0.736,
+        "graceful_log": true
+      }
+    },
+    "fulfillment-worker": {
+      "image_id": "sha256:ba2e6ec6b459480dbf20dfead1ce574c920924ff0f2b6ca13dab154110a506ab",
+      "configured_user": "10001:10001",
+      "secrets_found": false,
+      "image_health": "healthy",
+      "health_endpoint": 200,
+      "runtime_uid": 10001,
+      "server_port": 18193,
+      "sigterm": {
+        "exit_code": 143,
+        "stop_seconds": 3.496,
+        "graceful_log": true
+      }
+    },
+    "mock-pos": {
+      "image_id": "sha256:1f5428df62fc1d4d93e90ad763a1cabb126e6ce3f14f7a819702ef56731ebc0f",
+      "configured_user": "10001:10001",
+      "secrets_found": false,
+      "image_health": "healthy",
+      "health_endpoint": 200,
+      "runtime_uid": 10001,
+      "server_port": 18194,
+      "sigterm": {
+        "exit_code": 143,
+        "stop_seconds": 0.477,
+        "graceful_log": true
+      }
+    }
+  },
+  "target_active_brands": "brand_a,brand_b,brand_c",
+  "source_active_brands": "brand_a",
+  "inactive_brands_rejected": true,
+  "source_brand_a_fulfilled_on_worker_sigterm": true,
+  "source_queue_drained": true,
+  "unverified": [
+    "ECS Task Role / AWS SQS",
+    "RDS TLS / credentials",
+    "external JWKS"
+  ]
+}

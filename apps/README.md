@@ -165,7 +165,39 @@ Ubuntu 24.04 WSL에서 통합 테스트 18건을 통과했다.
 
 외부 JWT 발급자와 AWS IAM·ECS 배포는 별도 환경에서 검증한다.
 
-## 다음 구현 단계
+## ECS 배포 준비
 
-Phase 1-5에서는 로컬 부하 시나리오와 초기 성능 기준을 정의하고, 테스트 데이터와 실행 절차를 재현 가능하게 정리한다.
-Outbox·Worker 처리 지연과 큐 적체를 확인한 뒤 Source 배포에 사용할 환경 설정 및 운영 절차를 확정한다.
+서비스별로 한 번 빌드한 이미지를 Source와 Target에 사용한다. Task 설정에서 `SERVER_PORT`를
+주입하고 컨테이너 포트와 일치시킨다. 이미지는 UID/GID `10001:10001`로 실행되며
+`/health`는 프로세스 생존, `/ready`는 DB 연결을 포함한 준비 상태를 제공한다.
+
+| 런타임 설정 | Source 예시 | Target 예시 |
+| --- | --- | --- |
+| `ACTIVE_BRANDS` | `brand_a` | `brand_a,brand_b,brand_c` |
+| Catalog·Order·Worker DB | `DB_URL`, `DB_BRAND_A_PASSWORD` | `DB_URL`, A/B/C의 서비스별 비밀번호 |
+| Order·Worker SQS | `AWS_REGION`, `SQS_BRAND_A_QUEUE_URL` | `AWS_REGION`, A/B/C Queue URL |
+| Catalog·Order JWT | 신뢰 발급자의 issuer, audience, JWKS URL | 동일한 검증 계약, 활성 브랜드 A/B/C |
+| Worker → POS | `POS_URL`, `POS_SHARED_TOKEN` | 동일한 설정 방식 |
+
+- AWS에서는 `SQS_ENDPOINT`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`를 비워 두거나
+  생략한다. SDK 기본 자격 증명 체인이 ECS Task Role을 사용한다. LocalStack용 URL과 키는
+  로컬 Compose에서만 제공한다. Task Role에는 Order의 `sqs:SendMessage` 또는 Worker의
+  `sqs:ReceiveMessage`, `sqs:DeleteMessage`를 활성 큐 ARN에 한정한다. ECS Execution Role의
+  이미지 가져오기·로그 전송·시크릿 주입 권한은 애플리케이션 역할과 분리한다.
+  [AWS SDK 기본 자격 증명 체인](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials-chain.html)
+- RDS에서는 TLS 검증을 켠 JDBC URL을 `DB_URL`로 주입한다. 예시 값은
+  `jdbc:postgresql://<rds-host>:5432/ordersaas?sslmode=verify-full&sslrootcert=/run/certs/rds-ca.pem`이다.
+  Task에서 읽을 수 있는 CA 번들과 RDS 네트워크 경로를 준비한다. 각 서비스와 브랜드의 비밀번호는
+  개별 시크릿으로 주입한다. 마이그레이션 권한은 별도 작업에 부여한다.
+- JWT는 `JWT_ISSUER`, `JWT_AUDIENCE`, `JWT_JWK_SET_URI`를 설정한다. 로컬
+  `LOCAL_JWT_SECRET`은 개발 검증에서 사용한다. 사설 서브넷의 DNS와 JWKS HTTPS 접근을 확인한다.
+  Mock POS의 DB 자격 증명과 `POS_SHARED_TOKEN`도 런타임에 주입한다.
+- ECS Task Definition에 컨테이너 헬스체크를 명시한다. 예를 들어
+  `["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:$SERVER_PORT/ready || exit 1"]`를 사용한다.
+  이미지의 Docker `HEALTHCHECK`는 로컬에서도 동작한다. 시작 여유와 `stopTimeout` 30초를
+  초기값으로 두고, 부하 중 SIGTERM·ALB 연결 드레이닝·Worker 가시성 제한을 Phase 2에서 확인한다.
+  [ECS 컨테이너 헬스체크](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/healthcheck.html)
+
+저장소 루트에서 `python3 experiments/k6/verify_images.py <결과.json>`으로 로컬 검증을 재실행할 수 있다.
+실제 ECS Task Role·AWS SQS, RDS TLS, 외부 JWKS 및 ALB 연동은 Phase 2 검증 항목이다.
+로컬 부하 조건과 원시 결과는 [실험 문서](../experiments/README.md)에 기록한다.

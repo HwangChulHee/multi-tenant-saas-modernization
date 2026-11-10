@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.Message;
+import software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName;
 
 @Component
 class FulfillmentConsumer {
@@ -48,6 +49,7 @@ class FulfillmentConsumer {
             try (var tenant = MDC.putCloseable("tenant_id", brand)) {
                 try {
                     var messages = sqs.receiveMessage(receive -> receive.queueUrl(queue)
+                            .messageSystemAttributeNames(MessageSystemAttributeName.SENT_TIMESTAMP)
                             .maxNumberOfMessages(1).waitTimeSeconds(1)).messages();
                     for (Message message : messages) {
                         process(brand, queue, message);
@@ -60,6 +62,8 @@ class FulfillmentConsumer {
     }
 
     private void process(String brand, String queue, Message message) throws JsonProcessingException {
+        long receivedAt = System.currentTimeMillis();
+        long processingStart = System.nanoTime();
         OrderEvent event = json.readValue(message.body(), OrderEvent.class);
         if (event == null || !event.hasIdentifiers() || !brand.equals(event.tenantId())) {
             LOG.warn("Rejected event with invalid identifiers or tenant");
@@ -70,6 +74,12 @@ class FulfillmentConsumer {
             boolean handled = Boolean.TRUE.equals(store.transactions().execute(transaction -> deliver(store.jdbc(), event)));
             if (handled) {
                 sqs.deleteMessage(delete -> delete.queueUrl(queue).receiptHandle(message.receiptHandle()));
+                String sentAt = message.attributes().get(MessageSystemAttributeName.SENT_TIMESTAMP);
+                if (sentAt != null) {
+                    LOG.atInfo().addKeyValue("sqs_message_age_ms", receivedAt - Long.parseLong(sentAt))
+                            .addKeyValue("sqs_receive_to_ack_ms", (System.nanoTime() - processingStart) / 1_000_000)
+                            .log("SQS message acknowledged");
+                }
             }
         }
     }
@@ -92,7 +102,7 @@ class FulfillmentConsumer {
             throw new IllegalStateException("Order status and fulfillment ledger disagree");
         }
         pos.post().uri("/deliveries").body(event).retrieve().toBodilessEntity();
-        jdbc.update("INSERT INTO processed_events (event_id, order_id) VALUES (?, ?)", event.eventId(), event.orderId());
+        jdbc.update("INSERT INTO processed_events (event_id, order_id, processed_at) VALUES (?, ?, clock_timestamp())", event.eventId(), event.orderId());
         jdbc.update("UPDATE orders SET status = 'FULFILLED' WHERE id = ?", event.orderId());
         LOG.info("Fulfillment recorded");
         return true;

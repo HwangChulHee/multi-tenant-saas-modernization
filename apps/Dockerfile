@@ -18,4 +18,6 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=build /app.jar app.jar
 USER 10001:10001
+HEALTHCHECK --interval=10s --timeout=4s --start-period=20s --retries=3 \
+    CMD wget -q -O /dev/null "http://127.0.0.1:${SERVER_PORT}/ready" || exit 1
 ENTRYPOINT ["java", "-jar", "app.jar"]
