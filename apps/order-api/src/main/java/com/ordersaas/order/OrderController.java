@@ -54,6 +54,8 @@ class OrderController {
             return replay(byKey(jdbc, key), request);
         }
         Order order = inserted.getFirst();
+        jdbc.update("INSERT INTO outbox_events (event_id, order_id) VALUES (?, ?)",
+                UUID.randomUUID(), order.id());
         return ResponseEntity.created(URI.create("/orders/" + order.id())).body(order);
     }
 

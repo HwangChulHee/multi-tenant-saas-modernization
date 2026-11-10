@@ -22,7 +22,17 @@ SELECT NOT EXISTS (SELECT FROM schema_migrations WHERE version = 1) AS needs_v1 
 \ir V001__tenant_tables.sql
 INSERT INTO schema_migrations VALUES (1);
 \endif
+SELECT NOT EXISTS (SELECT FROM schema_migrations WHERE version = 2) AS needs_v2 \gset
+\if :needs_v2
+\ir V002__outbox_activation.sql
+INSERT INTO schema_migrations VALUES (2);
+\endif
 GRANT SELECT ON menus TO :"catalog", :"orders";
 GRANT SELECT, INSERT ON orders TO :"orders";
 GRANT SELECT ON orders TO :"worker";
+GRANT SELECT, INSERT ON outbox_events TO :"orders";
+GRANT UPDATE (published_at, attempts, next_attempt_at) ON outbox_events TO :"orders";
+GRANT SELECT (event_id, order_id) ON outbox_events TO :"worker";
+GRANT UPDATE (status) ON orders TO :"worker";
+GRANT SELECT, INSERT ON processed_events TO :"worker";
 COMMIT;

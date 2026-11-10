@@ -9,4 +9,4 @@ management:
     health:
       group:
         readiness:
-          include: readinessState
+          include: readinessState,db

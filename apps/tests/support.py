@@ -60,3 +60,12 @@ def sql(statement, *, user="ordersaas", password="local-dev-only", check=True):
     return compose("exec", "-T", "-e", f"PGPASSWORD={password}", "postgres",
                    "psql", "-X", "-qAt", "-v", "ON_ERROR_STOP=1", "-v", "VERBOSITY=verbose",
                    "-h", "127.0.0.1", "-U", user, "-d", "ordersaas", "-c", statement, check=check)
+
+
+def wait_for(predicate, description, *, seconds=45):
+    deadline = time.monotonic() + seconds
+    while time.monotonic() < deadline:
+        if predicate():
+            return
+        time.sleep(0.25)
+    raise AssertionError(f"Timed out waiting for {description}")

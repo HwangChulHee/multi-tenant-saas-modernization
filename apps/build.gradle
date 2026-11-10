@@ -53,3 +53,26 @@ configure([project(':catalog-api'), project(':order-api')]) {
         implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     }
 }
+
+project(':common') {
+    dependencies {
+        compileOnly platform('software.amazon.awssdk:bom:2.41.8')
+        compileOnly 'software.amazon.awssdk:sqs'
+        compileOnly 'software.amazon.awssdk:url-connection-client'
+    }
+}
+
+configure([project(':order-api'), project(':fulfillment-worker')]) {
+    dependencies {
+        implementation platform('software.amazon.awssdk:bom:2.41.8')
+        implementation 'software.amazon.awssdk:sqs'
+        implementation 'software.amazon.awssdk:url-connection-client'
+    }
+}
+
+project(':mock-pos') {
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+        runtimeOnly 'org.postgresql:postgresql'
+    }
+}

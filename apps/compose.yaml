@@ -11,6 +11,11 @@ x-app: &app
 x-sqs-env: &sqs-env
   SQS_ENDPOINT: ${SQS_ENDPOINT:?set SQS_ENDPOINT}
   AWS_REGION: ${AWS_REGION:?set AWS_REGION}
+  AWS_ACCESS_KEY_ID: test
+  AWS_SECRET_ACCESS_KEY: test
+  SQS_BRAND_A_QUEUE_URL: ${SQS_BRAND_A_QUEUE_URL:?set SQS_BRAND_A_QUEUE_URL}
+  SQS_BRAND_B_QUEUE_URL: ${SQS_BRAND_B_QUEUE_URL:?set SQS_BRAND_B_QUEUE_URL}
+  SQS_BRAND_C_QUEUE_URL: ${SQS_BRAND_C_QUEUE_URL:?set SQS_BRAND_C_QUEUE_URL}
 
 services:
   postgres:
@@ -32,6 +37,7 @@ services:
     entrypoint: ["/bin/sh", "/migrations/migrate.sh"]
     environment:
       POSTGRES_HOST: postgres
+      POS_DB_PASSWORD: ${POS_DB_PASSWORD:?set POS_DB_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
@@ -57,8 +63,12 @@ services:
       AWS_DEFAULT_REGION: ${AWS_REGION:?set AWS_REGION}
       LOCALSTACK_HOST: localstack:4566
       SQS_ENDPOINT_STRATEGY: path
+      SQS_VISIBILITY_TIMEOUT: ${SQS_VISIBILITY_TIMEOUT:-8}
+      SQS_MAX_RECEIVE_COUNT: ${SQS_MAX_RECEIVE_COUNT:-3}
+    volumes:
+      - ./localstack/init-sqs.sh:/etc/localstack/init/ready.d/10-sqs.sh:ro
     healthcheck:
-      test: ["CMD-SHELL", "awslocal sqs list-queues >/dev/null"]
+      test: ["CMD-SHELL", "for brand in a b c; do awslocal sqs get-queue-url --queue-name brand-$$brand-orders >/dev/null || exit 1; done"]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -124,6 +134,9 @@ services:
       DB_BRAND_B_PASSWORD: ${WORKER_BRAND_B_PASSWORD:?set WORKER_BRAND_B_PASSWORD}
       DB_BRAND_C_PASSWORD: ${WORKER_BRAND_C_PASSWORD:?set WORKER_BRAND_C_PASSWORD}
       ACTIVE_BRANDS: ${ACTIVE_BRANDS:?set ACTIVE_BRANDS}
+      POS_URL: ${POS_URL:?set POS_URL}
+      POS_SHARED_TOKEN: ${POS_SHARED_TOKEN:?generate POS_SHARED_TOKEN}
+      POS_TIMEOUT_MS: ${POS_TIMEOUT_MS:-2500}
       SERVER_PORT: ${WORKER_PORT:?set WORKER_PORT}
     ports:
       - "127.0.0.1:${WORKER_PORT}:${WORKER_PORT}"
@@ -131,6 +144,8 @@ services:
       migrate:
         condition: service_completed_successfully
       localstack:
+        condition: service_healthy
+      mock-pos:
         condition: service_healthy
 
   mock-pos:
@@ -142,8 +157,17 @@ services:
     environment:
       ACTIVE_BRANDS: ${ACTIVE_BRANDS:?set ACTIVE_BRANDS}
       SERVER_PORT: ${MOCK_POS_PORT:?set MOCK_POS_PORT}
+      SPRING_DATASOURCE_URL: ${DB_URL:?set DB_URL}
+      SPRING_DATASOURCE_USERNAME: mock_pos_app
+      SPRING_DATASOURCE_PASSWORD: ${POS_DB_PASSWORD:?set POS_DB_PASSWORD}
+      POS_SHARED_TOKEN: ${POS_SHARED_TOKEN:?generate POS_SHARED_TOKEN}
+      POS_FAIL_FIRST: ${POS_FAIL_FIRST:-0}
+      POS_DELAY_MS: ${POS_DELAY_MS:-0}
     ports:
       - "127.0.0.1:${MOCK_POS_PORT}:${MOCK_POS_PORT}"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
 
 volumes:
   postgres-data:
