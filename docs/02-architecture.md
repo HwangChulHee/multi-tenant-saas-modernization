@@ -36,13 +36,20 @@ flowchart TB
   W --> EC2
   CP[ECS EC2 Capacity Provider] --> ASG[EC2 Auto Scaling Group]
   ASG --> EC2
-  API --> OBS[CloudWatch 메트릭 / 로그]
-  W --> OBS
+  API --> OTel[OpenTelemetry 계측 / Collector]
+  W --> OTel
+  OTel --> TRACE[분산 추적 저장소]
+  API --> LOG[구조화 로그 / CloudWatch Logs]
+  W --> LOG
+  EC2 --> CW[CloudWatch EC2 / ECS / ASG 지표]
+  OTel --> METRIC[브랜드별 지표 / 대시보드]
 ```
 
 위 도식에서 API/Worker와 EC2 연결선은 **Task가 EC2에서 실행되는 배치 관계**를 나타냅니다. Task 수 증설과 EC2 호스트 증설은 별개로, ECS Service Auto Scaling으로 desired Task 수를 늘린 후 용량이 부족하면 Capacity Provider의 관리형 확장 설정을 통해 ASG 용량을 조정합니다. AWS가 실제 트래픽을 직접 보고 EC2를 자동 증설한다는 뜻이 아닙니다.
 
 **데이터 범위:** PostgreSQL은 기존 RDS와 브랜드별 스키마/권한을 유지하며 **DB 데이터 마이그레이션은 수행하지 않습니다.** 처음에는 SQS도 브랜드별 Queue를 유지해 메시지와 IAM 격리 수준을 보존합니다.
+
+**관측 경계:** Source Fargate와 Target ECS on EC2에 동일한 Trace·로그 필드와 브랜드별 메트릭을 적용합니다. API → DB → SQS → Worker → 모의 POS 경로에서 Trace Context를 전파하고, 서비스/테넌트/배포 버전별로 구분합니다. 메트릭의 `tenant_id`는 브랜드 A/B/C 같은 유한 집합만 허용하며 주문 ID·사용자 ID를 라벨로 사용하지 않습니다. 세부 내용은 [08. 관측 계층](08-observability.md)을 참조합니다.
 
 ## 핵심 기술 의사결정
 
@@ -53,6 +60,7 @@ flowchart TB
 5. **전환:** 브랜드마다 단일 주문 쓰기 주체를 유지하고 데이터의 진실 공급원(Source of Truth)을 명확히 합니다.
 6. **네트워크:** Private Task, DB 보안 그룹, ALB 진입점, VPC Endpoint/NAT 선택과 비용을 검토합니다.
 7. **가용성:** 동일한 최소 중복성 기준으로 비교하며 ECS Task 수만으로 고가용성을 주장하지 않습니다.
+8. **관측(필수):** OpenTelemetry Trace, 브랜드별 지연·오류·처리량 메트릭, 구조화 로그, CloudWatch ECS/EC2/ASG/SQS/RDS 지표를 연결해 장애·증설·Cutover의 원인을 설명할 수 있어야 합니다.
 
 ## 계획된 ADR
 
@@ -60,4 +68,5 @@ flowchart TB
 - ADR-002: 테넌트별 DB 보안 모델
 - ADR-003: Queue 구조 및 비즈니스 중복 처리 방지
 - ADR-004: 브랜드 라우팅과 Cutover 시 데이터 소유권
-- ADR-005: 비용 모델, SLO, 모니터링
+- ADR-005: 비용 모델 및 SLO
+- ADR-006: OpenTelemetry/CloudWatch 관측 경로 및 Trace 저장소 선택
