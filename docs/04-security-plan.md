@@ -1,35 +1,35 @@
-# 04. Tenant isolation and security test plan
+# 04. 테넌트 격리 및 보안 테스트 계획
 
-**Status:** Design and negative-test plan; not a certification.
+**상태:** 설계 및 부정 테스트 계획. 보안 인증이나 안전성 보장을 의미하지 않습니다.
 
-## Threat model
+## 위협 모델
 
-- Brand A reads or changes Brand B orders or catalog data.
-- Forged tenant headers or manipulated tokens switch the request's tenant context.
-- Shared workers process messages under the wrong tenant identity.
-- An overly privileged ECS task role grants access beyond intended AWS resources.
-- Pooled resources lead to availability interference / noisy neighbor.
-- Logs or monitoring traces disclose sensitive data.
+- 브랜드 A가 브랜드 B의 주문이나 메뉴에 접근.
+- 위조한 테넌트 헤더 또는 변조한 인증 토큰으로 테넌트 전환.
+- 공유 Worker가 다른 테넌트의 ID로 메시지를 처리.
+- ECS Task Role의 과도한 권한으로 허가되지 않은 AWS 리소스 접근.
+- 공유 자원의 경합으로 다른 브랜드의 서비스 가용성 침해(Noisy Neighbor).
+- 로그 및 추적 데이터에 민감 정보가 기록되는 문제.
 
-## Security controls
+## 보안 통제
 
-1. **Identity:** validate token signature, issuer, audience and expiration. Resolve the brand/tenant server-side from trusted claims and membership.
-2. **API:** all reads/writes require a trusted tenant context. Define stable 403/404 behavior for unauthorized IDs.
-3. **PostgreSQL:** use properly tested tenant isolation such as RLS with non-bypass runtime roles. Set tenant context transaction-locally if connection pooling is used; verify it cannot bleed between requests.
-4. **SQS/worker:** validate trusted tenant-to-order associations, use stable idempotency keys, reject invalid jobs and route poison messages to DLQ.
-5. **AWS boundary:** private ECS tasks, least-privilege task roles, separate execution roles, Secrets Manager, TLS, CloudTrail, narrowly scoped security groups.
-6. **Observability:** record denied operations and policy changes without secrets or actual customer data.
+1. **인증:** 토큰 서명, Issuer, Audience, 만료 시각을 검증합니다. 신뢰할 수 있는 Claim과 서버 측 소속 정보로 브랜드를 결정합니다.
+2. **API 인가:** 모든 조회/변경에서 신뢰할 수 있는 테넌트 컨텍스트를 사용하고, 미인가 ID에 대한 403/404 동작을 결정합니다.
+3. **PostgreSQL:** RLS 등 검증 가능한 데이터 격리를 사용하고, 런타임 계정이 RLS를 우회하지 못하도록 설정합니다. 연결 풀에서는 요청 간 테넌트 컨텍스트가 섞이지 않는지 테스트합니다.
+4. **SQS/Worker:** 메시지 내 테넌트 정보와 실제 주문 소유권을 검증하고, 멱등성 키를 사용하며 비정상 작업은 안전하게 거부하고 DLQ 정책을 적용합니다.
+5. **AWS 경계:** Private ECS Task, 최소 권한 Task Role, 별도 Execution Role, Secrets Manager, TLS, CloudTrail, 제한된 보안 그룹.
+6. **관측:** 인증 거부·권한 정책 변경을 기록하되 비밀값이나 실제 고객 정보를 기록하지 않습니다.
 
-## Negative tests
+## 부정 테스트 목록
 
-| Action | Expected result |
+| 시도 | 기대 결과 |
 |---|---|
-| A credential reads B order | Denied |
-| A credential edits B catalog | Denied |
-| `X-Tenant-ID: B` forged by A | Ignored / denied |
-| DB connection reused across tenants | No prior tenant's rows visible |
-| Worker message with conflicting tenant/order IDs | Rejected, safely logged |
-| Task requests unapproved secret | AWS AccessDenied |
-| SQS redelivers an order event | Only one business fulfillment effect |
+| A 인증 정보로 B 주문 조회 | 접근 거부 |
+| A 인증 정보로 B 메뉴 변경 | 접근 거부 |
+| A가 `X-Tenant-ID: B` 위조 | 무시 또는 접근 거부 |
+| DB 연결을 다른 테넌트가 재사용 | 이전 테넌트 행 노출 없음 |
+| Worker 메시지의 테넌트 ID와 주문 소유자 불일치 | 거부 후 안전하게 기록 |
+| Task에서 허가되지 않은 Secret 요청 | AWS AccessDenied |
+| SQS 메시지 재전달 | 비즈니스 처리 결과는 한 번만 반영 |
 
-Retain redacted evidence, HTTP results, PostgreSQL checks and AWS audit event references. Testing uses synthetic accounts/data only.
+HTTP 결과, PostgreSQL 확인 결과, AWS 감사 이벤트 등 민감 정보를 제거한 증거만 보관합니다. 테스트는 가상 계정과 가상 데이터로 수행합니다.
