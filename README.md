@@ -59,6 +59,8 @@
 - [07. 참고 자료](docs/07-references.md)
 - [08. 필수 관측 계층 설계](docs/08-observability.md)
 - [09. 구현 상세 설계 v1](docs/09-detailed-design.md)
+- [10. 학습·실습 커리큘럼](docs/10-learning-curriculum.md)
+- [Source Lab 01. VPC 및 네트워크](labs/source/01-network/README.md)
 
 ## 디렉터리
 
@@ -67,6 +69,7 @@ apps/            # API, Worker, 모의 POS
 infra/           # Terraform 및 환경별 설정
 experiments/     # 부하 시나리오와 민감 정보를 제거한 실험 결과
 docs/            # 요구사항, ADR, 계획서, 결과 보고서
+labs/            # 학습·설계·실습·검증·Cleanup 및 재개 기록
 ```
 
 ## 기본 원칙
